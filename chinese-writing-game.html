@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luyện Viết Chữ Hán</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Nunito+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-duo-green: #58cc02;
+    --color-duo-green-shadow: #3f8f01;
+    --color-duo-green-light: #d7ffb8;
+    --color-sky-blue: #1cb0f6;
+    --color-sky-blue-shadow: #0a88c2;
+    --color-sunshine-yellow: #ffc700;
+    --color-sunshine-shadow: #b38f00;
+    --color-snow-white: #ffffff;
+    --color-cloud-gray: #e5e5e5;
+    --color-silver: #afafaf;
+    --color-graphite: #777777;
+    --color-charcoal: #4b4b4b;
+    --color-almost-black: #3c3c3c;
+    --color-correct: #58cc02;
+    --color-wrong: #ff4b4b;
+    --color-wrong-light: #ffe0e0;
+    --color-correct-light: #d7ffb8;
+    --font-main: 'Nunito Sans', 'Varela Round', system-ui, sans-serif;
+    --radius-btn: 12px;
+    --radius-card: 16px;
+    --radius-pill: 999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f7f7f7;
+    font-family: var(--font-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    width: 100%;
+    background: var(--color-snow-white);
+    border-bottom: 2px solid var(--color-cloud-gray);
+    text-align: center;
+    padding: 20px 20px 16px;
+  }
+  .header-owl {
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .header-title {
+    font-family: var(--font-main);
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 800;
+    color: var(--color-charcoal);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .header-title span {
+    color: var(--color-duo-green);
+  }
+  .header-sub {
+    font-size: 13px;
+    color: var(--color-graphite);
+    font-weight: 500;
+    letter-spacing: 0.053em;
+    margin-top: 4px;
+  }
+
+  /* ── Container ── */
+  .container {
+    width: 100%;
+    max-width: 860px;
+    padding: 24px 16px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* ── Score strip ── */
+  .score-panel {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .score-item {
+    background: var(--color-snow-white);
+    border: 2px solid var(--color-cloud-gray);
+    border-radius: var(--radius-card);
+    padding: 12px 20px;
+    min-width: 80px;
+    text-align: center;
+    flex: 1;
+    max-width: 130px;
+  }
+  .score-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--color-duo-green);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .score-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-graphite);
+    text-transform: uppercase;
+    letter-spacing: 0.053em;
+    margin-top: 4px;
+  }
+
+  /* ── Char selector ── */
+  .char-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+  }
+  .char-btn {
+    background: var(--color-snow-white);
+    border: 2px solid var(--color-cloud-gray);
+    border-radius: var(--radius-btn);
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    min-width: 60px;
+    box-shadow: 0 2px 0 var(--color-cloud-gray);
+  }
+  .char-btn:hover {
+    border-color: var(--color-duo-green);
+    background: var(--color-duo-green-light);
+    box-shadow: 0 2px 0 var(--color-duo-green-shadow);
+    transform: translateY(-1px);
+  }
+  .char-btn.active {
+    background: var(--color-duo-green-light);
+    border-color: var(--color-duo-green);
+    box-shadow: 0 2px 0 var(--color-duo-green-shadow);
+  }
+  .char-btn .han {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    display: block;
+    color: var(--color-almost-black);
+  }
+  .char-btn.active .han { color: var(--color-duo-green-shadow); }
+  .char-btn .viet {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--color-graphite);
+    margin-top: 2px;
+    display: block;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Main card ── */
+  .main-card {
+    background: var(--color-snow-white);
+    border: 2px solid var(--color-cloud-gray);
+    border-radius: var(--radius-card);
+    padding: 28px 28px 24px;
+    width: 100%;
+    max-width: 540px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    box-shadow: 0 4px 0 var(--color-cloud-gray);
+  }
+
+  /* ── Mode badge ── */
+  .mode-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+  }
+  .badge-preview { background: #e3f2fd; color: #1565c0; }
+  .badge-quiz    { background: #fff3e0; color: #e65100; }
+  .badge-done    { background: var(--color-duo-green-light); color: var(--color-duo-green-shadow); }
+
+  /* ── Char info ── */
+  .char-info { text-align: center; }
+  .char-display {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 58px;
+    color: var(--color-almost-black);
+    line-height: 1;
+    font-weight: 700;
+  }
+  .char-pinyin {
+    font-size: 17px;
+    color: var(--color-sky-blue);
+    font-weight: 700;
+    margin-top: 6px;
+    letter-spacing: 0.053em;
+  }
+  .char-meaning {
+    font-size: 14px;
+    color: var(--color-graphite);
+    font-weight: 500;
+    margin-top: 4px;
+    letter-spacing: 0.053em;
+  }
+  .stroke-count-badge {
+    display: inline-block;
+    background: var(--color-sunshine-yellow);
+    color: var(--color-almost-black);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 0 var(--color-sunshine-shadow);
+  }
+
+  /* ── Canvas ── */
+  .canvas-wrapper {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    border: 2px solid var(--color-cloud-gray);
+    border-radius: var(--radius-card);
+    background: white;
+    box-shadow: 0 4px 0 var(--color-cloud-gray), inset 0 2px 8px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  /* 田字格 guides */
+  .canvas-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background-image:
+      linear-gradient(rgba(88,204,2,0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,204,2,0.12) 1px, transparent 1px);
+    background-size: 70px 70px;
+    background-position: 70px 70px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .canvas-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background-image:
+      linear-gradient(rgba(88,204,2,0.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,204,2,0.2) 1px, transparent 1px);
+    background-size: 140px 140px;
+    background-position: 140px 140px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  #hanzi-container {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  /* ── Complete overlay ── */
+  .complete-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(215,255,184,0.95);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 20;
+    border-radius: 14px;
+  }
+  .complete-overlay.show { display: flex; }
+  .complete-star {
+    font-size: 52px;
+    animation: star-pop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .complete-text {
+    font-family: var(--font-main);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--color-duo-green-shadow);
+    letter-spacing: -0.01em;
+  }
+  .complete-sub { font-size: 13px; color: var(--color-graphite); font-weight: 500; }
+  @keyframes star-pop { 0%{transform:scale(0);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+
+  /* ── Stroke dots ── */
+  .stroke-hint {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .stroke-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--color-cloud-gray);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--color-silver);
+    transition: all 0.25s;
+    box-shadow: 0 2px 0 var(--color-cloud-gray);
+  }
+  .stroke-dot.done {
+    background: var(--color-duo-green);
+    border-color: var(--color-duo-green-shadow);
+    color: white;
+    box-shadow: 0 2px 0 var(--color-duo-green-shadow);
+  }
+  .stroke-dot.current {
+    background: var(--color-sky-blue);
+    border-color: var(--color-sky-blue-shadow);
+    color: white;
+    box-shadow: 0 2px 0 var(--color-sky-blue-shadow);
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+
+  /* ── Status box ── */
+  .status-box {
+    width: 100%;
+    border-radius: var(--radius-btn);
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    letter-spacing: 0.03em;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .status-idle    { background: #f7f7f7; color: var(--color-graphite); border-color: var(--color-cloud-gray); }
+  .status-quiz    { background: #fff8e0; color: #b8860b; border-color: var(--color-sunshine-yellow); }
+  .status-correct { background: var(--color-duo-green-light); color: var(--color-duo-green-shadow); border-color: var(--color-duo-green); }
+  .status-wrong   { background: var(--color-wrong-light); color: var(--color-wrong); border-color: #ffaaaa; }
+  .status-complete{ background: var(--color-duo-green-light); color: var(--color-duo-green-shadow); border-color: var(--color-duo-green); }
+
+  /* ── Progress ── */
+  .progress-section { width: 100%; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-graphite);
+    margin-bottom: 8px;
+    letter-spacing: 0.053em;
+  }
+  .progress-bar {
+    height: 12px;
+    background: var(--color-cloud-gray);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    box-shadow: inset 0 2px 0 rgba(0,0,0,0.07);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-duo-green), #80e000);
+    border-radius: var(--radius-pill);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+    position: relative;
+  }
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 0 999px 999px 0;
+  }
+
+  /* ── Divider ── */
+  .sep { width: 100%; height: 2px; background: var(--color-cloud-gray); border-radius: 1px; }
+
+  /* ── Buttons ── */
+  .controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+  .btn {
+    border: none;
+    border-radius: var(--radius-btn);
+    padding: 12px 22px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.053em;
+    text-transform: uppercase;
+    position: relative;
+    top: 0;
+  }
+  .btn:active { top: 2px; }
+
+  /* "Xem nét" — sky blue */
+  .btn-secondary {
+    background: var(--color-sky-blue);
+    color: white;
+    box-shadow: 0 4px 0 var(--color-sky-blue-shadow);
+  }
+  .btn-secondary:hover { background: #2dc0ff; }
+  .btn-secondary:active { box-shadow: 0 2px 0 var(--color-sky-blue-shadow); }
+
+  /* "Luyện viết" — duo green */
+  .btn-primary {
+    background: var(--color-duo-green);
+    color: white;
+    box-shadow: 0 4px 0 var(--color-duo-green-shadow);
+  }
+  .btn-primary:hover { background: #6ddb10; }
+  .btn-primary:active { box-shadow: 0 2px 0 var(--color-duo-green-shadow); }
+
+  /* "Làm lại" — ghost */
+  .btn-ghost {
+    background: white;
+    color: var(--color-charcoal);
+    border: 2px solid var(--color-cloud-gray);
+    box-shadow: 0 4px 0 var(--color-cloud-gray);
+  }
+  .btn-ghost:hover { border-color: var(--color-silver); background: #f7f7f7; }
+  .btn-ghost:active { box-shadow: 0 2px 0 var(--color-cloud-gray); }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .canvas-wrapper { width: 240px; height: 240px; }
+    .main-card { padding: 18px 16px; }
+    .btn { padding: 10px 16px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-owl">🦉</div>
+  <div class="header-title">Luyện Viết <span>Chữ Hán</span></div>
+  <div class="header-sub">Học viết đúng thứ tự nét bút · 練字</div>
+</div>
+
+<div class="container">
+
+  <!-- Score strip -->
+  <div class="score-panel">
+    <div class="score-item">
+      <div class="score-num" id="score-correct">0</div>
+      <div class="score-label">Nét đúng</div>
+    </div>
+    <div class="score-item">
+      <div class="score-num" id="score-attempts">0</div>
+      <div class="score-label">Lần thử</div>
+    </div>
+    <div class="score-item">
+      <div class="score-num" id="score-chars">0</div>
+      <div class="score-label">Chữ học</div>
+    </div>
+  </div>
+
+  <!-- Character selector -->
+  <div class="char-selector" id="char-selector"></div>
+
+  <!-- Main card -->
+  <div class="main-card">
+    <span class="mode-badge badge-preview" id="mode-badge">Sẵn sàng</span>
+
+    <!-- Char info -->
+    <div class="char-info">
+      <div class="char-display" id="char-display">家</div>
+      <div class="char-pinyin" id="char-pinyin">jiā</div>
+      <div class="char-meaning" id="char-meaning">🏠 Nhà, Gia đình</div>
+      <span class="stroke-count-badge" id="stroke-count-badge">10 nét</span>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrapper">
+      <div id="hanzi-container"></div>
+      <div class="complete-overlay" id="complete-overlay">
+        <div class="complete-star">🎉</div>
+        <div class="complete-text">Xuất sắc!</div>
+        <div class="complete-sub" id="complete-sub">Hoàn thành tất cả nét</div>
+      </div>
+    </div>
+
+    <!-- Stroke dots -->
+    <div class="stroke-hint" id="stroke-hint"></div>
+
+    <!-- Status -->
+    <div class="status-box status-idle" id="status-box">
+      Nhấn "Xem nét" để xem thứ tự, hoặc "Luyện viết" để bắt đầu
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>Tiến độ nét</span>
+        <span id="progress-text">0 / 0</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn btn-secondary" onclick="animateStrokes()">
+        🖌 Xem nét
+      </button>
+      <button class="btn btn-primary" onclick="startQuiz()">
+        ✏️ Luyện viết
+      </button>
+      <button class="btn btn-ghost" onclick="resetChar()">
+        🔄 Làm lại
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Robust HanziWriter loader with multiple CDN fallbacks -->
+<script>
+window.__hwReady = false;
+window.__hwError = null;
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.crossOrigin = 'anonymous';
+    s.onload = () => resolve(url);
+    s.onerror = () => reject(new Error('Failed to load: ' + url));
+    document.head.appendChild(s);
+  });
+}
+
+async function loadHanziWriter() {
+  const sources = [
+    'https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js',
+    'https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js',
+    'https://unpkg.com/hanzi-writer@3.7.3/dist/hanzi-writer.min.js',
+    'https://unpkg.com/hanzi-writer@latest/dist/hanzi-writer.min.js'
+  ];
+  for (const src of sources) {
+    try {
+      await loadScript(src);
+      if (typeof HanziWriter !== 'undefined') {
+        console.log('HanziWriter loaded from:', src);
+        window.__hwReady = true;
+        return;
+      }
+    } catch (e) {
+      console.warn(e.message);
+    }
+  }
+  window.__hwError = 'Không tải được thư viện HanziWriter. Vui lòng kiểm tra kết nối Internet.';
+}
+</script>
+
+<script>
+const CHARS = [
+  { char: '家', pinyin: 'jiā', meaning: '🏠 Nhà, Gia đình', strokes: 10 },
+  { char: '人', pinyin: 'rén', meaning: '👤 Người', strokes: 2 },
+  { char: '山', pinyin: 'shān', meaning: '⛰️ Núi', strokes: 3 },
+  { char: '水', pinyin: 'shuǐ', meaning: '💧 Nước', strokes: 4 },
+  { char: '日', pinyin: 'rì', meaning: '☀️ Mặt trời, Ngày', strokes: 4 },
+  { char: '月', pinyin: 'yuè', meaning: '🌙 Mặt trăng, Tháng', strokes: 4 },
+  { char: '木', pinyin: 'mù', meaning: '🌳 Cây, Gỗ', strokes: 4 },
+  { char: '火', pinyin: 'huǒ', meaning: '🔥 Lửa', strokes: 4 },
+  { char: '土', pinyin: 'tǔ', meaning: '🌱 Đất', strokes: 3 },
+  { char: '口', pinyin: 'kǒu', meaning: '👄 Miệng, Cửa', strokes: 3 },
+  { char: '大', pinyin: 'dà', meaning: '⬆️ To, Lớn', strokes: 3 },
+  { char: '小', pinyin: 'xiǎo', meaning: '⬇️ Nhỏ, Bé', strokes: 3 },
+  { char: '中', pinyin: 'zhōng', meaning: '🎯 Giữa, Trung', strokes: 4 },
+  { char: '好', pinyin: 'hǎo', meaning: '👍 Tốt, Hay', strokes: 6 },
+  { char: '学', pinyin: 'xué', meaning: '📚 Học', strokes: 8 },
+];
+
+let currentChar = CHARS[0];
+let writer = null;
+let mode = 'idle';
+let strokeTotal = 0;
+let strokeDone = 0;
+let scoreCorrect = 0;
+let scoreAttempts = 0;
+let scoreChars = 0;
+let completedChars = new Set();
+
+// Build selector
+const selector = document.getElementById('char-selector');
+CHARS.forEach((c, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'char-btn' + (i === 0 ? ' active' : '');
+  btn.innerHTML = `<span class="han">${c.char}</span><span class="viet">${c.meaning.split(' ').slice(1).join(' ')}</span>`;
+  btn.onclick = () => selectChar(i);
+  selector.appendChild(btn);
+});
+
+function selectChar(idx) {
+  currentChar = CHARS[idx];
+  document.querySelectorAll('.char-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.getElementById('char-display').textContent = currentChar.char;
+  document.getElementById('char-pinyin').textContent = currentChar.pinyin;
+  document.getElementById('char-meaning').textContent = currentChar.meaning;
+  document.getElementById('stroke-count-badge').textContent = `${currentChar.strokes} nét`;
+  document.getElementById('complete-overlay').classList.remove('show');
+  setMode('idle');
+  initWriter();
+}
+
+function initWriter(onReady) {
+  const container = document.getElementById('hanzi-container');
+  container.innerHTML = '';
+  strokeDone = 0;
+  strokeTotal = currentChar.strokes;
+
+  updateProgress(0, strokeTotal);
+  buildStrokeDots(strokeTotal);
+
+  writer = HanziWriter.create('hanzi-container', currentChar.char, {
+    width: container.parentElement.offsetWidth || 280,
+    height: container.parentElement.offsetHeight || 280,
+    padding: 20,
+    showOutline: true,
+    strokeColor: '#3c3c3c',
+    outlineColor: '#d7ffb8',
+    drawingColor: '#58cc02',
+    drawingWidth: 5,
+    strokeAnimationSpeed: 1,
+    delayBetweenStrokes: 200,
+    showCharacter: false,
+    charDataLoader: (char, onComplete) => {
+      const dataUrls = [
+        `https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${char}.json`,
+        `https://cdn.jsdelivr.net/npm/hanzi-writer-data@latest/${char}.json`,
+        `https://unpkg.com/hanzi-writer-data@latest/${char}.json`
+      ];
+      const tryUrl = (i) => {
+        if (i >= dataUrls.length) {
+          setStatus('wrong', `❌ Không tải được dữ liệu chữ "${char}"`);
+          return;
+        }
+        fetch(dataUrls[i])
+          .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(onComplete)
+          .catch(() => tryUrl(i + 1));
+      };
+      tryUrl(0);
+    },
+    onLoadCharDataError: (reason) => {
+      console.error('Char data error:', reason);
+      setStatus('wrong', `❌ Lỗi tải dữ liệu chữ "${currentChar.char}"`);
+    }
+  });
+
+  if (onReady) {
+    setTimeout(onReady, 600);
+  }
+}
+
+function setMode(m) {
+  mode = m;
+  const badge = document.getElementById('mode-badge');
+  badge.className = 'mode-badge';
+  if (m === 'preview') { badge.className += ' badge-preview'; badge.textContent = 'Xem trước'; }
+  else if (m === 'quiz') { badge.className += ' badge-quiz'; badge.textContent = 'Luyện viết'; }
+  else if (m === 'done') { badge.className += ' badge-done'; badge.textContent = 'Hoàn thành'; }
+  else { badge.className += ' badge-preview'; badge.textContent = 'Sẵn sàng'; }
+}
+
+function animateStrokes() {
+  if (!writer) return;
+  setMode('preview');
+  setStatus('quiz', '🖌️ Đang xem thứ tự nét...');
+  strokeDone = 0;
+  updateProgress(0, strokeTotal);
+  buildStrokeDots(strokeTotal);
+  document.getElementById('complete-overlay').classList.remove('show');
+  writer.animateCharacter({
+    onComplete: () => {
+      setStatus('idle', '✅ Đã xem xong! Nhấn "Luyện viết" để thực hành.');
+    }
+  });
+}
+
+function startQuiz() {
+  if (!writer) return;
+  setMode('quiz');
+  strokeDone = 0;
+  document.getElementById('complete-overlay').classList.remove('show');
+  updateProgress(0, strokeTotal);
+  buildStrokeDots(strokeTotal);
+  setStatus('quiz', '✏️ Vẽ nét theo thứ tự đúng trên khung trắng');
+
+  writer.quiz({
+    onMistake: (strokeData) => {
+      scoreAttempts++;
+      updateScoreUI();
+      setStatus('wrong', `❌ Sai rồi! Thử lại nét ${strokeData.strokeNum + 1}`);
+    },
+    onCorrectStroke: (strokeData) => {
+      scoreCorrect++;
+      scoreAttempts++;
+      strokeDone = strokeData.strokeNum + 1;
+      updateProgress(strokeDone, strokeTotal);
+      markStrokeDot(strokeData.strokeNum, 'done');
+      updateScoreUI();
+      setStatus('correct', `✅ Đúng! Nét ${strokeDone}/${strokeTotal}`);
+    },
+    onComplete: (summaryData) => {
+      setMode('done');
+      document.getElementById('complete-overlay').classList.remove('show');
+      void document.getElementById('complete-overlay').offsetWidth;
+      document.getElementById('complete-overlay').classList.add('show');
+      document.getElementById('complete-sub').textContent =
+        `${strokeTotal} nét · ${summaryData.totalMistakes} lần sai`;
+      if (!completedChars.has(currentChar.char)) {
+        completedChars.add(currentChar.char);
+        scoreChars = completedChars.size;
+        document.getElementById('score-chars').textContent = scoreChars;
+      }
+      updateProgress(strokeTotal, strokeTotal);
+      setStatus('complete', `🎉 Tuyệt vời! Đã hoàn thành "${currentChar.char}" — ${currentChar.meaning}`);
+    }
+  });
+}
+
+function resetChar() {
+  document.getElementById('complete-overlay').classList.remove('show');
+  setStatus('idle', 'Đã làm mới. Nhấn "Xem nét" hoặc "Luyện viết".');
+  setMode('idle');
+  initWriter();
+}
+
+function updateProgress(done, total) {
+  const pct = total > 0 ? (done / total * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${done} / ${total}`;
+}
+
+function updateScoreUI() {
+  document.getElementById('score-correct').textContent = scoreCorrect;
+  document.getElementById('score-attempts').textContent = scoreAttempts;
+}
+
+function buildStrokeDots(n) {
+  const hint = document.getElementById('stroke-hint');
+  hint.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'stroke-dot';
+    dot.textContent = i + 1;
+    dot.id = `dot-${i}`;
+    hint.appendChild(dot);
+  }
+}
+
+function markStrokeDot(idx, cls) {
+  const dot = document.getElementById(`dot-${idx}`);
+  if (dot) { dot.className = 'stroke-dot ' + cls; }
+  const next = document.getElementById(`dot-${idx + 1}`);
+  if (next) next.className = 'stroke-dot current';
+}
+
+function setStatus(type, msg) {
+  const el = document.getElementById('status-box');
+  el.className = 'status-box status-' + type;
+  el.textContent = msg;
+}
+
+// Init
+(async function init() {
+  buildStrokeDots(currentChar.strokes);
+  document.getElementById('dot-0').className = 'stroke-dot current';
+  setStatus('idle', '⏳ Đang tải thư viện viết chữ Hán...');
+
+  await loadHanziWriter();
+
+  if (window.__hwError || typeof HanziWriter === 'undefined') {
+    setStatus('wrong', '❌ ' + (window.__hwError || 'Không tải được HanziWriter'));
+    document.querySelectorAll('.btn').forEach(b => b.disabled = true);
+    return;
+  }
+
+  initWriter();
+  setStatus('idle', 'Nhấn "Xem nét" để xem thứ tự, hoặc "Luyện viết" để bắt đầu');
+})();
+</script>
+</body>
+</html>
