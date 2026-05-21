@@ -24,6 +24,11 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html, body {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+
 body {
   background: #f7f7f7;
   font-family: var(--font-main);
@@ -316,6 +321,10 @@ body {
   position: absolute;
   inset: 0;
   z-index: 2;
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ── Complete overlay ── */
@@ -499,12 +508,6 @@ body {
 .btn-ghost:hover { border-color: var(--color-silver); background: #f7f7f7; }
 .btn-ghost:active { box-shadow: 0 2px 0 var(--color-cloud-gray); }
 
-/* ── Responsive ── */
-@media (max-width: 480px) {
-  .canvas-wrapper { width: 240px; height: 240px; }
-  .main-card { padding: 18px 16px; }
-  .btn { padding: 10px 16px; font-size: 13px; }
-}
 
 /* Design system: kỹ thuật phác thảo Trung Hoa anime + màu nước */
 :root {
@@ -785,6 +788,9 @@ body::after {
     linear-gradient(135deg, #fffaf0, #f7ead4);
   background-size: 100% 100%, 100% 100%, 9px 9px, 100% 100%;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.55), 5px 6px 0 rgba(201, 95, 102, 0.18);
+  touch-action: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 .canvas-wrapper::before {
@@ -909,15 +915,153 @@ body::after {
 }
 
 @media (max-width: 480px) {
-  .header {
-    margin-top: 12px;
-    border-radius: 22px;
+  .container {
+    padding: 8px 8px 16px;
+    gap: 10px;
   }
 
-  .char-display { font-size: 62px; }
-  .char-display { font-size: 62px; }
-  .canvas-wrapper { width: min(84vw, 280px); height: min(84vw, 280px); }
-  .main-card { padding-top: 36px; }
+  .main-card {
+    padding: 16px 12px 14px;
+    border-radius: 20px;
+  }
+
+  .group-tabs, .char-selector {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    padding: 6px 4px !important;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .group-tabs::-webkit-scrollbar, .char-selector::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .group-tab, .char-btn {
+    flex-shrink: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .mascot-section {
+    gap: 10px;
+    margin: 6px 0;
+  }
+
+  .mascot-avatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .mascot-bubble {
+    padding: 8px 12px;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+  }
+
+  .mascot-text {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .header {
+    margin-top: 8px;
+    padding: 10px 10px 8px;
+    border-radius: 16px;
+  }
+
+  .header-title {
+    font-size: 18px;
+  }
+
+  .header-sub {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .header-stats {
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .header-stat-item {
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 10px;
+  }
+
+  .level-progress-wrapper {
+    margin-top: 6px;
+    padding: 0 8px;
+  }
+
+  .level-progress-bar {
+    height: 8px;
+  }
+
+  .score-panel {
+    gap: 6px;
+  }
+
+  .score-item {
+    padding: 6px 8px;
+    min-width: 65px;
+    max-width: 90px;
+    border-radius: 12px;
+  }
+
+  .score-num {
+    font-size: 18px;
+  }
+
+  .score-label {
+    font-size: 8.5px;
+    margin-top: 2px;
+  }
+
+  .canvas-wrapper {
+    width: min(84vw, 270px) !important;
+    height: min(84vw, 270px) !important;
+    border-radius: 16px;
+  }
+
+  .controls {
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .btn {
+    padding: 8px 14px;
+    font-size: 12.5px;
+    border-radius: 12px;
+    touch-action: manipulation;
+  }
+
+  .char-btn, .group-tab, .mute-btn, .btn-help-icon {
+    touch-action: manipulation;
+  }
+
+  .modal-card {
+    padding: 16px 20px;
+    margin: 10px;
+    border-radius: 18px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .modal-body {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .help-step p {
+    font-size: 12px;
+  }
 }
 
 /* Disabled state styling for buttons & interaction locks */
