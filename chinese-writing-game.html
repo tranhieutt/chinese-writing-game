@@ -13,6 +13,28 @@
   <div class="header-owl">🦉</div>
   <div class="header-title">Luyện Viết <span>Chữ Hán</span></div>
   <div class="header-sub">Học viết đúng thứ tự nét bút · 練字</div>
+  
+  <!-- Gamified Stats Panel -->
+  <div class="header-stats">
+    <div class="header-stat-item streak-badge" id="streak-tooltip" title="Chuỗi ngày học tập liên tiếp">
+      🔥 <span id="user-streak">0</span> ngày
+    </div>
+    <div class="header-stat-item xp-badge" title="Điểm kinh nghiệm tích lũy">
+      ✨ <span id="user-xp">0</span> XP
+    </div>
+    <div class="header-stat-item lvl-badge">
+      Cấp <span id="user-level">1</span>
+    </div>
+    <button id="mute-toggle" class="mute-btn" onclick="toggleMute()" title="Bật/Tắt âm thanh">🔊</button>
+    <button id="btn-help" class="btn-help-icon" onclick="openHelp()" title="Hướng dẫn sử dụng">❓ Hướng dẫn</button>
+  </div>
+
+  <!-- Level Progress Bar -->
+  <div class="level-progress-wrapper">
+    <div class="level-progress-bar">
+      <div class="level-progress-fill" id="level-progress-fill" style="width: 0%"></div>
+    </div>
+  </div>
 </div>
 
 <div class="container">
@@ -54,6 +76,7 @@
     <!-- Canvas -->
     <div class="canvas-wrapper">
       <div id="hanzi-container"></div>
+      <canvas id="confetti-canvas"></canvas>
       
       <!-- Complete Overlay -->
       <div class="complete-overlay" id="complete-overlay">
@@ -65,6 +88,39 @@
 
     <!-- Stroke hint dots -->
     <div class="stroke-hint" id="stroke-hint"></div>
+
+    <!-- Mascot & Speech Bubble Section -->
+    <div class="mascot-section">
+      <div class="mascot-avatar">
+        <svg viewBox="0 0 100 100" class="panda-svg">
+          <circle cx="50" cy="55" r="33" fill="#ffffff" stroke="#21394f" stroke-width="3" />
+          <!-- Ears -->
+          <circle cx="23" cy="29" r="11" fill="#21394f" />
+          <circle cx="77" cy="29" r="11" fill="#21394f" />
+          <circle cx="23" cy="29" r="6" fill="#ead8bd" />
+          <circle cx="77" cy="29" r="6" fill="#ead8bd" />
+          <!-- Eye patches -->
+          <ellipse cx="38" cy="49" rx="8" ry="10" transform="rotate(-15 38 49)" fill="#21394f" />
+          <ellipse cx="62" cy="49" rx="8" ry="10" transform="rotate(15 62 49)" fill="#21394f" />
+          <!-- Eye whites -->
+          <circle cx="39" cy="48" r="3" fill="#ffffff" />
+          <circle cx="61" cy="48" r="3" fill="#ffffff" />
+          <!-- Pupils -->
+          <circle cx="39" cy="48" r="1.2" fill="#21394f" id="panda-pupil-l" />
+          <circle cx="61" cy="48" r="1.2" fill="#21394f" id="panda-pupil-r" />
+          <!-- Nose -->
+          <ellipse cx="50" cy="58" rx="4.5" ry="3" fill="#21394f" />
+          <!-- Mouth -->
+          <path d="M47 62 Q50 65 53 62" fill="none" stroke="#21394f" stroke-width="2.5" stroke-linecap="round" />
+          <!-- Blush -->
+          <circle cx="26" cy="57" r="3.5" fill="#f3d1cc" />
+          <circle cx="74" cy="57" r="3.5" fill="#f3d1cc" />
+        </svg>
+      </div>
+      <div class="mascot-bubble">
+        <div class="mascot-text" id="mascot-text">Chào bạn học sinh chăm chỉ! Hôm nay hãy luyện viết thật vui vẻ nhé! 🐼</div>
+      </div>
+    </div>
 
     <!-- Status Box -->
     <div class="status-box status-idle" id="status-box">
@@ -97,6 +153,37 @@
     </div>
   </div>
 
+</div>
+
+<!-- Help Modal -->
+<div id="help-modal" class="modal-backdrop">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeHelp()">&times;</button>
+    <h3 class="modal-title">🎨 Cách chơi & Học viết chữ</h3>
+    <div class="modal-body">
+      <div class="help-step">
+        <span class="step-num">1</span>
+        <p>Chọn một <strong>chủ đề</strong> ở phía trên (ví dụ: Thiên nhiên, Số đếm...).</p>
+      </div>
+      <div class="help-step">
+        <span class="step-num">2</span>
+        <p>Chọn <strong>chữ Hán</strong> bạn muốn học trong danh sách chữ hiển thị.</p>
+      </div>
+      <div class="help-step">
+        <span class="step-num">3</span>
+        <p>Bấm <strong>🖌 Xem nét</strong> để xem hướng dẫn thứ tự các nét bút tự động.</p>
+      </div>
+      <div class="help-step">
+        <span class="step-num">4</span>
+        <p>Bấm <strong>✏️ Luyện viết</strong> và vẽ theo đúng thứ tự. Mỗi nét viết đúng sẽ được tô màu riêng rực rỡ và cho bạn điểm <strong>XP</strong>!</p>
+      </div>
+      <div class="help-step">
+        <span class="step-num">5</span>
+        <p>Luyện tập hàng ngày để tích lũy điểm XP tăng cấp và duy trì chuỗi <strong>Streak 🔥</strong> nhé!</p>
+      </div>
+    </div>
+    <button class="btn btn-primary modal-ok-btn" onclick="closeHelp()">Bắt đầu học ngay!</button>
+  </div>
 </div>
 
 <!-- Data and Game Logic scripts -->

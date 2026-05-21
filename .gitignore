@@ -1,0 +1,7 @@
+.vercel
+.claude/
+.codex/
+.sdd/
+.tasks/
+production/
+node_modules/

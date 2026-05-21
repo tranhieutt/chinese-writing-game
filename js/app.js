@@ -47,6 +47,344 @@ let scoreAttempts = 0;
 let scoreChars = 0;
 let completedChars = new Set();
 
+// Gamification variables
+let xp = 0;
+let level = 1;
+let streak = 0;
+let audioCtx = null;
+let isMuted = false;
+
+// ── Web Audio API SFX Synthesizer ──
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playSFX(type) {
+  if (isMuted) return;
+  try {
+    initAudio();
+    const now = audioCtx.currentTime;
+    
+    if (type === 'correct') {
+      // Âm thanh tinh tinh vui tai (nốt C5 -> E5)
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.frequency.setValueAtTime(523.25, now); // C5
+      osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+      
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+      
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } else if (type === 'wrong') {
+      // Âm thanh trầm rè ngắn báo sai (nốt C3 -> G2)
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.frequency.setValueAtTime(130.81, now); // C3
+      osc.frequency.linearRampToValueAtTime(98.00, now + 0.15); // G2
+      
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+      
+      osc.start(now);
+      osc.stop(now + 0.18);
+    } else if (type === 'complete') {
+      // Hợp âm arpeggio tươi sáng ăn mừng (C5 -> E5 -> G5 -> C6)
+      const freqs = [523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        const noteTime = now + (idx * 0.07);
+        osc.frequency.setValueAtTime(freq, noteTime);
+        
+        gain.gain.setValueAtTime(0.12, noteTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, noteTime + 0.2);
+        
+        osc.start(noteTime);
+        osc.stop(noteTime + 0.2);
+      });
+    }
+  } catch (err) {
+    console.warn('Audio play failed:', err);
+  }
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  localStorage.setItem('hz_muted', isMuted);
+  const btn = document.getElementById('mute-toggle');
+  if (btn) {
+    btn.textContent = isMuted ? '🔇' : '🔊';
+  }
+  initAudio();
+}
+
+// ── Help Modal Handlers ──
+function openHelp() {
+  const modal = document.getElementById('help-modal');
+  if (modal) modal.classList.add('show');
+  initAudio();
+}
+
+function closeHelp() {
+  const modal = document.getElementById('help-modal');
+  if (modal) modal.classList.remove('show');
+  initAudio();
+}
+
+// ── Gamification State & Sync ──
+function loadGamification() {
+  xp = parseInt(localStorage.getItem('hz_xp') || '0', 10);
+  level = Math.floor(xp / 500) + 1;
+  
+  // Load Completed characters
+  const savedCompleted = localStorage.getItem('hz_completed_chars');
+  if (savedCompleted) {
+    try {
+      const arr = JSON.parse(savedCompleted);
+      completedChars = new Set(arr);
+      scoreChars = completedChars.size;
+      const scoreCharsEl = document.getElementById('score-chars');
+      if (scoreCharsEl) scoreCharsEl.textContent = scoreChars;
+    } catch (e) {
+      completedChars = new Set();
+    }
+  }
+
+  // Load and check Streak
+  const todayStr = new Date().toISOString().split('T')[0];
+  const lastDate = localStorage.getItem('hz_last_date');
+  streak = parseInt(localStorage.getItem('hz_streak') || '0', 10);
+  
+  if (lastDate) {
+    const diffTime = Math.abs(new Date(todayStr) - new Date(lastDate));
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > 1) {
+      streak = 0; // Streak broken
+      localStorage.setItem('hz_streak', 0);
+    }
+  } else {
+    streak = 0;
+  }
+  
+  // Audio state
+  isMuted = localStorage.getItem('hz_muted') === 'true';
+  const muteBtn = document.getElementById('mute-toggle');
+  if (muteBtn) muteBtn.textContent = isMuted ? '🔇' : '🔊';
+
+  // Synchronize stats UI
+  const xpEl = document.getElementById('user-xp');
+  const levelEl = document.getElementById('user-level');
+  const streakEl = document.getElementById('user-streak');
+  if (xpEl) xpEl.textContent = xp;
+  if (levelEl) levelEl.textContent = level;
+  if (streakEl) streakEl.textContent = streak;
+  
+  updateLevelProgressBar();
+}
+
+function updateLevelProgressBar() {
+  const currentLevelXP = xp % 500;
+  const pct = (currentLevelXP / 500) * 100;
+  const fillEl = document.getElementById('level-progress-fill');
+  if (fillEl) fillEl.style.width = pct + '%';
+}
+
+function addXP(amount) {
+  xp += amount;
+  localStorage.setItem('hz_xp', xp);
+  
+  const xpEl = document.getElementById('user-xp');
+  if (xpEl) xpEl.textContent = xp;
+  
+  const newLevel = Math.floor(xp / 500) + 1;
+  if (newLevel > level) {
+    level = newLevel;
+    const levelEl = document.getElementById('user-level');
+    if (levelEl) levelEl.textContent = level;
+    
+    // Level up announcement
+    setTimeout(() => {
+      playSFX('complete');
+      updateMascot('welcome', `🎉 Cực đỉnh! Bạn đã thăng cấp lên Cấp ${level}! Chăm viết tiếp nhé! 🐼👑`);
+      triggerConfetti();
+    }, 400);
+  }
+  updateLevelProgressBar();
+}
+
+function handleStreakAndCompletion() {
+  const todayStr = new Date().toISOString().split('T')[0];
+  const lastDate = localStorage.getItem('hz_last_date');
+  let currentStreak = parseInt(localStorage.getItem('hz_streak') || '0', 10);
+  
+  if (lastDate !== todayStr) {
+    if (lastDate) {
+      const diffTime = Math.abs(new Date(todayStr) - new Date(lastDate));
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays === 1) {
+        currentStreak++;
+      } else {
+        currentStreak = 1;
+      }
+    } else {
+      currentStreak = 1;
+    }
+    streak = currentStreak;
+    localStorage.setItem('hz_streak', currentStreak);
+    localStorage.setItem('hz_last_date', todayStr);
+    
+    const streakEl = document.getElementById('user-streak');
+    if (streakEl) streakEl.textContent = currentStreak;
+  }
+}
+
+// ── Mascot Interaction System ──
+const MASCOT_PHRASES = {
+  welcome: [
+    "Chào mừng bạn học sinh chăm chỉ! Hôm nay hãy luyện viết thật vui vẻ nhé! 🐼",
+    "Viết chữ Hán thật dễ! Hãy cùng tớ thử sức nào! 🐼",
+    "Mỗi nét chữ Hán đều chứa một câu chuyện, hãy cùng vẽ nên nhé! 🎨"
+  ],
+  preview: [
+    "Hãy nhìn nét cọ chạy để ghi nhớ thứ tự vẽ nhé! 🖌️",
+    "Quan sát kỹ hướng đi của từng nét bút nha! 👀"
+  ],
+  quiz: [
+    "Đến lượt bạn rồi đó, hãy vẽ nét tiếp theo thật nắn nót nha! ✏️",
+    "Hãy vẽ thật chậm rãi và chính xác nào! 🌟"
+  ],
+  correct: [
+    "Tuyệt vời quá! Nét vẽ chuẩn luôn! 🎉",
+    "Giỏi lắm! Đúng rồi đó! 🌟",
+    "Nét vẽ rất đẹp, tiếp tục nào! 🐼",
+    "Chính xác! Bạn học nhanh thật đấy! 🚀"
+  ],
+  wrong: [
+    "Không sao đâu, vẽ lại nét này nhé! 💪",
+    "Hơi lệch một chút rồi, thử lại nào!",
+    "Cố lên bạn ơi, tớ tin bạn làm được! 🐼",
+    "Chú ý hướng nét bút vẽ nha!"
+  ],
+  complete: [
+    "Xuất sắc! Bạn đã viết hoàn chỉnh chữ này rồi! Nhận thêm XP nhé! 🏆",
+    "Tuyệt đỉnh! Chữ viết rất đẹp và đúng nét! 🐼🎉"
+  ]
+};
+
+function updateMascot(state, customMessage) {
+  const textEl = document.getElementById('mascot-text');
+  if (!textEl) return;
+  
+  if (customMessage) {
+    textEl.textContent = customMessage;
+  } else {
+    const list = MASCOT_PHRASES[state] || MASCOT_PHRASES.welcome;
+    const rand = list[Math.floor(Math.random() * list.length)];
+    textEl.textContent = rand;
+  }
+  
+  // Mascot quick bounce animation on dialogue update
+  const avatar = document.querySelector('.mascot-avatar');
+  if (avatar) {
+    avatar.style.animation = 'none';
+    void avatar.offsetWidth; // Reflow to reset animation
+    avatar.style.animation = 'panda-bounce 0.4s ease-out';
+    setTimeout(() => {
+      avatar.style.animation = 'panda-bounce 3s infinite ease-in-out';
+    }, 400);
+  }
+}
+
+// ── Confetti Particle Animation ──
+let confettiActive = false;
+let confettiParticles = [];
+let confettiCanvas = null;
+let confettiCtx = null;
+
+function resizeConfettiCanvas() {
+  if (confettiCanvas) {
+    confettiCanvas.width = confettiCanvas.parentElement.clientWidth;
+    confettiCanvas.height = confettiCanvas.parentElement.clientHeight;
+  }
+}
+
+window.addEventListener('resize', resizeConfettiCanvas);
+
+function triggerConfetti() {
+  if (!confettiCanvas || !confettiCtx) return;
+  resizeConfettiCanvas();
+  confettiParticles = [];
+  const colors = ['#e26d5c', '#f7df98', '#7cb1a4', '#b8c9d4', '#4e88ad', '#c95f66'];
+  for (let i = 0; i < 70; i++) {
+    confettiParticles.push({
+      x: confettiCanvas.width / 2,
+      y: confettiCanvas.height / 2,
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 0.5) * 8 - 4,
+      r: Math.random() * 4 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: 1,
+      decay: Math.random() * 0.015 + 0.008
+    });
+  }
+  if (!confettiActive) {
+    confettiActive = true;
+    requestAnimationFrame(updateConfetti);
+  }
+}
+
+function updateConfetti() {
+  if (!confettiActive || !confettiCtx || !confettiCanvas) return;
+  confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  
+  let alive = false;
+  confettiParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.16; // Gravity
+    p.vx *= 0.98; // Drag
+    p.alpha -= p.decay;
+    
+    if (p.alpha > 0) {
+      alive = true;
+      confettiCtx.save();
+      confettiCtx.globalAlpha = p.alpha;
+      confettiCtx.fillStyle = p.color;
+      confettiCtx.beginPath();
+      confettiCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      confettiCtx.fill();
+      confettiCtx.restore();
+    }
+  });
+  
+  if (alive) {
+    requestAnimationFrame(updateConfetti);
+  } else {
+    confettiActive = false;
+    confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  }
+}
+
+// ── Navigation & Control Panel ──
 function buildGroupTabs() {
   const tabsEl = document.getElementById('group-tabs');
   tabsEl.innerHTML = '';
@@ -54,7 +392,7 @@ function buildGroupTabs() {
     const btn = document.createElement('button');
     btn.className = 'group-tab' + (i === 0 ? ' active' : '');
     btn.innerHTML = `${g.icon} ${g.label} <span class="tab-count">${g.chars.length}</span>`;
-    btn.onclick = () => selectGroup(i);
+    btn.onclick = () => { selectGroup(i); initAudio(); };
     tabsEl.appendChild(btn);
   });
   updateControlsState();
@@ -74,7 +412,7 @@ function buildCharSelector() {
     const btn = document.createElement('button');
     btn.className = 'char-btn' + (i === 0 ? ' active' : '');
     btn.innerHTML = `<span class="han">${c.char}</span><span class="viet">${c.meaning.split(' ').slice(1).join(' ')}</span>`;
-    btn.onclick = () => selectChar(i);
+    btn.onclick = () => { selectChar(i); initAudio(); };
     selector.appendChild(btn);
   });
   updateControlsState();
@@ -90,8 +428,10 @@ function selectChar(idx) {
   document.getElementById('char-meaning').textContent = currentChar.meaning;
   document.getElementById('stroke-count-badge').textContent = `${currentChar.strokes} nét`;
   document.getElementById('complete-overlay').classList.remove('show');
+  
   setMode('idle');
   initWriter();
+  updateMascot('welcome');
 }
 
 function initWriter(onReady) {
@@ -168,7 +508,7 @@ function updateControlsState() {
 
   if (btnAnimate) btnAnimate.disabled = isLocked || mode === 'done';
   if (btnQuiz) btnQuiz.disabled = isLocked || mode === 'done';
-  if (btnReset) btnReset.disabled = false; // Always allow resetting to break loops or stuck state
+  if (btnReset) btnReset.disabled = false;
 
   groupTabs.forEach(t => t.disabled = isLocked);
   charBtns.forEach(b => b.disabled = isLocked);
@@ -176,7 +516,9 @@ function updateControlsState() {
 
 function animateStrokes() {
   if (!writer) return;
+  initAudio();
   setMode('preview');
+  updateMascot('preview');
   setStatus('quiz', '🖌️ Đang xem thứ tự nét...');
   strokeDone = 0;
   updateProgress(0, strokeTotal);
@@ -185,6 +527,7 @@ function animateStrokes() {
   writer.animateCharacter({
     onComplete: () => {
       setMode('idle');
+      updateMascot('welcome');
       setStatus('idle', '✅ Đã xem xong! Nhấn "Luyện viết" để thực hành.');
     }
   });
@@ -192,7 +535,9 @@ function animateStrokes() {
 
 function startQuiz() {
   if (!writer) return;
+  initAudio();
   setMode('quiz');
+  updateMascot('quiz');
   strokeDone = 0;
   document.getElementById('complete-overlay').classList.remove('show');
   updateProgress(0, strokeTotal);
@@ -205,12 +550,12 @@ function startQuiz() {
   // Đặt màu bút vẽ cho nét đầu tiên
   writer.updateColor('drawingColor', STROKE_COLORS[0]);
 
-  // MutationObserver will handle color reapplication reactively
-
   writer.quiz({
     onMistake: (strokeData) => {
       scoreAttempts++;
       updateScoreUI();
+      playSFX('wrong');
+      updateMascot('wrong');
       setStatus('wrong', `❌ Sai rồi! Thử lại nét ${strokeData.strokeNum + 1}`);
     },
     onCorrectStroke: (strokeData) => {
@@ -218,13 +563,18 @@ function startQuiz() {
       scoreAttempts++;
       strokeDone = strokeData.strokeNum + 1;
       updateProgress(strokeDone, strokeTotal);
+      
       const strokeColor = STROKE_COLORS[strokeData.strokeNum % STROKE_COLORS.length];
       markStrokeDot(strokeData.strokeNum, 'done', strokeColor);
       updateScoreUI();
+      
+      playSFX('correct');
+      updateMascot('correct');
+      addXP(10); // +10 XP cho mỗi nét vẽ đúng
+      
       setStatus('correct', `✅ Đúng! Nét ${strokeDone}/${strokeTotal}`);
-      // Tô màu nét vừa đúng trong SVG
       colorStrokeSVG(strokeData.strokeNum, strokeColor);
-      // Đổi màu bút vẽ cho nét tiếp theo
+      
       const nextColor = STROKE_COLORS[strokeDone % STROKE_COLORS.length];
       writer.updateColor('drawingColor', nextColor);
     },
@@ -236,24 +586,37 @@ function startQuiz() {
       document.getElementById('complete-overlay').classList.add('show');
       document.getElementById('complete-sub').textContent =
         `${strokeTotal} nét · ${summaryData.totalMistakes} lần sai`;
+      
+      // Lưu trữ chữ đã học
       if (!completedChars.has(currentChar.char)) {
         completedChars.add(currentChar.char);
         scoreChars = completedChars.size;
         document.getElementById('score-chars').textContent = scoreChars;
+        localStorage.setItem('hz_completed_chars', JSON.stringify(Array.from(completedChars)));
       }
+      
       updateProgress(strokeTotal, strokeTotal);
       setStatus('complete', `🎉 Tuyệt vời! Đã hoàn thành "${currentChar.char}" — ${currentChar.meaning}`);
+      
+      playSFX('complete');
+      triggerConfetti();
+      const scoreWordXP = Math.max(0, 100 - summaryData.totalMistakes * 10);
+      addXP(scoreWordXP);
+      handleStreakAndCompletion();
+      updateMascot('complete', `🎉 Hoàn hảo! Bạn nhận được thêm +${scoreWordXP} XP thưởng!`);
     }
   });
 }
 
 function resetChar() {
   if (strokeObserver) strokeObserver.disconnect();
+  initAudio();
   Object.keys(strokeColorMap).forEach(k => delete strokeColorMap[k]);
   document.getElementById('complete-overlay').classList.remove('show');
   setStatus('idle', 'Đã làm mới. Nhấn "Xem nét" hoặc "Luyện viết".');
   setMode('idle');
   initWriter();
+  updateMascot('welcome');
 }
 
 function updateProgress(done, total) {
@@ -279,7 +642,7 @@ function buildStrokeDots(n) {
   }
 }
 
-// Lưu màu cho từng nét để reapply
+// Lưu màu cho từng nét để reapply khi MutationObserver kích hoạt
 const strokeColorMap = {};
 let strokeObserver = null;
 
@@ -316,7 +679,6 @@ function applyAllStrokeColors() {
   const topG = svg.querySelector(':scope > g');
   if (!topG) return;
 
-  // Tìm g layer có nhiều g con nhất = character stroke layer
   const layers = Array.from(topG.querySelectorAll(':scope > g'));
   const charLayer = layers.reduce((best, g) =>
     g.querySelectorAll(':scope > g').length > (best ? best.querySelectorAll(':scope > g').length : 0) ? g : best
@@ -355,18 +717,24 @@ function markStrokeDot(idx, cls, color) {
 
 function setStatus(type, msg) {
   const el = document.getElementById('status-box');
-  el.className = 'status-box status-' + type;
-  el.textContent = msg;
+  if (el) {
+    el.className = 'status-box status-' + type;
+    el.textContent = msg;
+  }
 }
 
 // Khởi động khi tải trang
 (async function init() {
+  confettiCanvas = document.getElementById('confetti-canvas');
+  confettiCtx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
+  loadGamification();
   buildGroupTabs();
   buildCharSelector();
   buildStrokeDots(currentChar.strokes);
   const dot0 = document.getElementById('dot-0');
   if (dot0) dot0.className = 'stroke-dot current';
   setStatus('idle', '⏳ Đang tải thư viện viết chữ Hán...');
+  updateMascot('welcome');
 
   await loadHanziWriter();
 
