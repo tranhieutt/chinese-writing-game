@@ -302,6 +302,17 @@ function updateMascot(state, customMessage) {
     textEl.textContent = rand;
   }
   
+  // Cập nhật class trạng thái cho bong bóng thoại để màu sắc đồng bộ với trạng thái của Mascot
+  const bubble = document.getElementById('mascot-bubble');
+  if (bubble) {
+    let statusClass = 'status-idle';
+    if (state === 'preview' || state === 'quiz') statusClass = 'status-quiz';
+    else if (state === 'correct') statusClass = 'status-correct';
+    else if (state === 'wrong') statusClass = 'status-wrong';
+    else if (state === 'complete') statusClass = 'status-complete';
+    bubble.className = 'mascot-bubble ' + statusClass;
+  }
+  
   // Mascot quick bounce animation on dialogue update
   const avatar = document.querySelector('.mascot-avatar');
   if (avatar) {
@@ -327,7 +338,47 @@ function resizeConfettiCanvas() {
   }
 }
 
-window.addEventListener('resize', resizeConfettiCanvas);
+function getWriterSize() {
+  const container = document.getElementById('hanzi-container');
+  if (!container || !container.parentElement) return { width: 280, height: 280 };
+  
+  const parent = container.parentElement;
+  let w = parent.clientWidth || parent.offsetWidth;
+  let h = parent.clientHeight || parent.offsetHeight;
+  
+  // Nếu màn hình mobile rất nhỏ hoặc CSS chưa load xong hoàn toàn gây ra clientWidth = 0, 
+  // tính toán kích thước dựa theo viewport
+  if (w <= 0 || h <= 0) {
+    const isMobile = window.innerWidth <= 480;
+    if (isMobile) {
+      // Dựa theo CSS: width: min(200px, 48vw, 28vh)
+      const size = Math.min(200, window.innerWidth * 0.48, window.innerHeight * 0.28);
+      w = size;
+      h = size;
+    } else {
+      w = 280;
+      h = 280;
+    }
+  }
+  
+  return { width: Math.max(120, w), height: Math.max(120, h) };
+}
+
+let resizeWriterTimeout;
+function resizeHanziWriter() {
+  clearTimeout(resizeWriterTimeout);
+  resizeWriterTimeout = setTimeout(() => {
+    if (writer && typeof HanziWriter !== 'undefined') {
+      const size = getWriterSize();
+      writer.updateDimensions({ width: size.width, height: size.height });
+    }
+  }, 100);
+}
+
+window.addEventListener('resize', () => {
+  resizeConfettiCanvas();
+  resizeHanziWriter();
+});
 
 function triggerConfetti() {
   if (!confettiCanvas || !confettiCtx) return;
@@ -423,6 +474,13 @@ function selectChar(idx) {
   Object.keys(strokeColorMap).forEach(k => delete strokeColorMap[k]);
   currentChar = currentGroup.chars[idx];
   document.querySelectorAll('.char-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+
+  // Tự động cuộn nút từ đang hoạt động vào tầm nhìn (scrollIntoView) mượt mà
+  const activeBtn = document.querySelector('.char-btn.active');
+  if (activeBtn) {
+    activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }
+
   document.getElementById('char-display').textContent = currentChar.char;
   document.getElementById('char-pinyin').textContent = currentChar.pinyin;
   document.getElementById('char-meaning').textContent = currentChar.meaning;
@@ -434,8 +492,36 @@ function selectChar(idx) {
   updateMascot('welcome');
 }
 
+function prevChar() {
+  if (!currentGroup || !currentGroup.chars.length) return;
+  const currentIndex = currentGroup.chars.findIndex(c => c.char === currentChar.char);
+  let newIndex = currentIndex - 1;
+  if (newIndex < 0) {
+    newIndex = currentGroup.chars.length - 1;
+  }
+  selectChar(newIndex);
+  initAudio();
+}
+
+function nextChar() {
+  if (!currentGroup || !currentGroup.chars.length) return;
+  const currentIndex = currentGroup.chars.findIndex(c => c.char === currentChar.char);
+  let newIndex = currentIndex + 1;
+  if (newIndex >= currentGroup.chars.length) {
+    newIndex = 0;
+  }
+  selectChar(newIndex);
+  initAudio();
+}
+
 function initWriter(onReady) {
+  if (typeof HanziWriter === 'undefined') {
+    console.warn("HanziWriter is not loaded yet.");
+    return;
+  }
+
   const container = document.getElementById('hanzi-container');
+  if (!container) return;
   container.innerHTML = '';
   strokeDone = 0;
   strokeTotal = currentChar.strokes;
@@ -443,9 +529,11 @@ function initWriter(onReady) {
   updateProgress(0, strokeTotal);
   buildStrokeDots(strokeTotal);
 
+  const size = getWriterSize();
+
   writer = HanziWriter.create('hanzi-container', currentChar.char, {
-    width: container.parentElement.offsetWidth || 280,
-    height: container.parentElement.offsetHeight || 280,
+    width: size.width,
+    height: size.height,
     padding: 20,
     showOutline: true,
     strokeColor: '#21394f',
@@ -503,12 +591,16 @@ function updateControlsState() {
   const btnReset = document.getElementById('btn-reset');
   const groupTabs = document.querySelectorAll('.group-tab');
   const charBtns = document.querySelectorAll('.char-btn');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
 
   const isLocked = (mode === 'preview' || mode === 'quiz');
 
   if (btnAnimate) btnAnimate.disabled = isLocked || mode === 'done';
   if (btnQuiz) btnQuiz.disabled = isLocked || mode === 'done';
   if (btnReset) btnReset.disabled = false;
+  if (btnPrev) btnPrev.disabled = isLocked;
+  if (btnNext) btnNext.disabled = isLocked;
 
   groupTabs.forEach(t => t.disabled = isLocked);
   charBtns.forEach(b => b.disabled = isLocked);
@@ -716,10 +808,13 @@ function markStrokeDot(idx, cls, color) {
 }
 
 function setStatus(type, msg) {
-  const el = document.getElementById('status-box');
-  if (el) {
-    el.className = 'status-box status-' + type;
-    el.textContent = msg;
+  const bubble = document.getElementById('mascot-bubble');
+  const text = document.getElementById('mascot-text');
+  if (bubble) {
+    bubble.className = 'mascot-bubble status-' + type;
+  }
+  if (text) {
+    text.textContent = msg;
   }
 }
 

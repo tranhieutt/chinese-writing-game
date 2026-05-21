@@ -10,23 +10,29 @@
 <body>
 
 <div class="header">
-  <div class="header-owl">🦉</div>
-  <div class="header-title">Luyện Viết <span>Chữ Hán</span></div>
-  <div class="header-sub">Học viết đúng thứ tự nét bút · 練字</div>
-  
-  <!-- Gamified Stats Panel -->
-  <div class="header-stats">
-    <div class="header-stat-item streak-badge" id="streak-tooltip" title="Chuỗi ngày học tập liên tiếp">
-      🔥 <span id="user-streak">0</span> ngày
+  <div class="header-main-row">
+    <div class="header-branding">
+      <div class="header-owl">🦉</div>
+      <div class="header-text-group">
+        <div class="header-title">Luyện Viết <span>Chữ Hán</span></div>
+        <div class="header-sub">Học viết đúng thứ tự nét bút · 練字</div>
+      </div>
     </div>
-    <div class="header-stat-item xp-badge" title="Điểm kinh nghiệm tích lũy">
-      ✨ <span id="user-xp">0</span> XP
+    
+    <!-- Gamified Stats Panel -->
+    <div class="header-stats">
+      <div class="header-stat-item streak-badge" id="streak-tooltip" title="Chuỗi ngày học tập liên tiếp">
+        🔥 <span id="user-streak">0</span> ngày
+      </div>
+      <div class="header-stat-item xp-badge" title="Điểm kinh nghiệm tích lũy">
+        ✨ <span id="user-xp">0</span> XP
+      </div>
+      <div class="header-stat-item lvl-badge">
+        Cấp <span id="user-level">1</span>
+      </div>
+      <button id="mute-toggle" class="mute-btn" onclick="toggleMute()" title="Bật/Tắt âm thanh">🔊</button>
+      <button id="btn-help" class="btn-help-icon" onclick="openHelp()" title="Hướng dẫn sử dụng">❓ Hướng dẫn</button>
     </div>
-    <div class="header-stat-item lvl-badge">
-      Cấp <span id="user-level">1</span>
-    </div>
-    <button id="mute-toggle" class="mute-btn" onclick="toggleMute()" title="Bật/Tắt âm thanh">🔊</button>
-    <button id="btn-help" class="btn-help-icon" onclick="openHelp()" title="Hướng dẫn sử dụng">❓ Hướng dẫn</button>
   </div>
 
   <!-- Level Progress Bar -->
@@ -40,19 +46,13 @@
 <div class="container">
 
   <!-- Score strip -->
-  <div class="score-panel">
-    <div class="score-item">
-      <div class="score-num" id="score-correct">0</div>
-      <div class="score-label">Nét đúng</div>
-    </div>
-    <div class="score-item">
-      <div class="score-num" id="score-attempts">0</div>
-      <div class="score-label">Lần thử</div>
-    </div>
-    <div class="score-item">
-      <div class="score-num" id="score-chars">0</div>
-      <div class="score-label">Chữ học</div>
-    </div>
+  <!-- Score strip -->
+  <div class="score-strip">
+    <span class="score-strip-item">🎯 Nét đúng: <strong id="score-correct">0</strong></span>
+    <span class="score-strip-divider">·</span>
+    <span class="score-strip-item">📝 Lần thử: <strong id="score-attempts">0</strong></span>
+    <span class="score-strip-divider">·</span>
+    <span class="score-strip-item">📚 Chữ đã học: <strong id="score-chars">0</strong></span>
   </div>
 
   <!-- Group tabs -->
@@ -73,16 +73,31 @@
       <div class="stroke-count-badge" id="stroke-count-badge">0 nét</div>
     </div>
 
-    <!-- Canvas -->
-    <div class="canvas-wrapper">
-      <div id="hanzi-container"></div>
-      <canvas id="confetti-canvas"></canvas>
-      
-      <!-- Complete Overlay -->
-      <div class="complete-overlay" id="complete-overlay">
-        <div class="complete-star">⭐</div>
-        <div class="complete-text">Hoàn thành!</div>
-        <div class="complete-sub" id="complete-sub">0 nét · 0 lần sai</div>
+    <!-- Canvas area with floating nav -->
+    <div class="canvas-area-container">
+      <div class="canvas-side-col">
+        <button id="btn-prev" class="btn btn-floating-nav" onclick="prevChar()" title="Chữ trước">⬅️</button>
+        <button id="btn-animate" class="btn btn-side-animate btn-side-vertical" onclick="animateStrokes()">
+          🖌️ Xem nét
+        </button>
+      </div>
+
+      <div class="canvas-wrapper">
+        <div id="hanzi-container"></div>
+        <canvas id="confetti-canvas"></canvas>
+        <div class="complete-overlay" id="complete-overlay">
+          <div class="complete-star">⭐</div>
+          <div class="complete-text">Hoàn thành!</div>
+          <div class="complete-sub" id="complete-sub">0 nét · 0 lần sai</div>
+          <button class="btn btn-complete-next" onclick="nextChar()">Chữ tiếp theo ➡️</button>
+        </div>
+      </div>
+
+      <div class="canvas-side-col">
+        <button id="btn-next" class="btn btn-floating-nav" onclick="nextChar()" title="Chữ sau">➡️</button>
+        <button id="btn-quiz" class="btn btn-side-quiz btn-side-vertical" onclick="startQuiz()">
+          ✏️ Luyện viết
+        </button>
       </div>
     </div>
 
@@ -117,14 +132,9 @@
           <circle cx="74" cy="57" r="3.5" fill="#f3d1cc" />
         </svg>
       </div>
-      <div class="mascot-bubble">
+      <div class="mascot-bubble status-idle" id="mascot-bubble">
         <div class="mascot-text" id="mascot-text">Chào bạn học sinh chăm chỉ! Hôm nay hãy luyện viết thật vui vẻ nhé! 🐼</div>
       </div>
-    </div>
-
-    <!-- Status Box -->
-    <div class="status-box status-idle" id="status-box">
-      Nhấn "Xem nét" để xem thứ tự, hoặc "Luyện viết" để bắt đầu
     </div>
 
     <div class="progress-section">
@@ -137,22 +147,18 @@
       </div>
     </div>
 
-    <div class="sep"></div>
-
     <!-- Controls -->
     <div class="controls">
-      <button id="btn-animate" class="btn btn-secondary" onclick="animateStrokes()">
-        🖌 Xem nét
-      </button>
-      <button id="btn-quiz" class="btn btn-primary" onclick="startQuiz()">
-        ✏️ Luyện viết
-      </button>
       <button id="btn-reset" class="btn btn-ghost" onclick="resetChar()">
-        🔄 Làm lại
+        🔄<span class="btn-text"> Làm lại</span>
       </button>
     </div>
   </div>
 
+  <!-- Footer -->
+  <footer style="text-align:center;padding:12px 0 18px;font-size:0.75rem;color:#aaa;letter-spacing:0.04em;">
+    made by <a href="https://github.com/tranhieutt" target="_blank" rel="noopener" style="color:#aaa;text-decoration:none;">tranhieutt</a>
+  </footer>
 </div>
 
 <!-- Help Modal -->
@@ -185,11 +191,6 @@
     <button class="btn btn-primary modal-ok-btn" onclick="closeHelp()">Bắt đầu học ngay!</button>
   </div>
 </div>
-
-<!-- Footer -->
-<footer style="text-align:center;padding:12px 0 18px;font-size:0.75rem;color:#aaa;letter-spacing:0.04em;">
-  made by <a href="https://github.com/tranhieutt" target="_blank" rel="noopener" style="color:#aaa;text-decoration:none;">tranhieutt</a>
-</footer>
 
 <!-- Data and Game Logic scripts -->
 <script src="js/vocab-groups.js"></script>
