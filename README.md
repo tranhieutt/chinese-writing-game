@@ -6,8 +6,8 @@ Web game luyện viết chữ Hán theo thứ tự nét bút, thiết kế theo 
 
 ## Tính năng
 
-- **7 nhóm HSK1** — Số đếm, Con người, Thời gian, Thiên nhiên, Cuộc sống, Động từ, Tính từ & Đại từ
-- **87 chữ Hán** theo chuẩn HSK1, kèm pinyin và nghĩa tiếng Việt
+- **10 nhóm chủ đề HSK1** — Số đếm, Đại từ, Con người, Thời gian, Địa điểm, Ăn uống, Đồ vật, Động từ, Tính chất, Thiên nhiên
+- **189 chữ Hán active** — bao phủ đủ 178 chữ unique trích từ HSK1 classic 150 words, kèm pinyin và nghĩa tiếng Việt
 - **Luyện viết** — vẽ nét theo đúng thứ tự trên canvas, nhận phản hồi tức thì
 - **Xem nét** — animation thứ tự nét bút từng chữ
 - **Tô màu nét** — mỗi nét một màu riêng sau khi vẽ đúng
@@ -35,7 +35,8 @@ GROUPS = [
 ```
 chinese-writing-game.html   # HTML chính
 css/chinese-writing-game.css  # Toàn bộ styles
-js/vocab-groups.js          # Data từ vựng (GROUPS[])
+js/vocab-groups.js          # Data chữ viết (GROUPS[])
+docs/vocabulary/hsk1-classic-150.md # Nguồn HSK1 classic 150 words
 js/app.js                   # Logic game
 ```
 
@@ -44,6 +45,12 @@ js/app.js                   # Logic game
 Mở thẳng file `chinese-writing-game.html` trên trình duyệt — không cần server.
 
 ## Lịch sử thay đổi
+
+### v0.6 — Vocabulary: Full HSK1 source coverage (2026-05-21)
+- Thêm nguồn `docs/vocabulary/hsk1-classic-150.md` cho HSK1 classic 150 words
+- Trích 178 chữ Hán unique từ source HSK1 và bổ sung đủ vào `GROUPS[]`
+- Tăng từ 87 lên 189 chữ active (178 chữ HSK1 + 11 legacy extras)
+- Verify toàn bộ 189 chữ có `hanzi-writer-data@2.0.1` và stroke count khớp CDN
 
 ### v0.5 — UX: Bố cục lại button Xem nét & Luyện viết (2026-05-21)
 - Di chuyển button "Xem nét" và "Luyện viết" sang 2 bên khung chữ viết

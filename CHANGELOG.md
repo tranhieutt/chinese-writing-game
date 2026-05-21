@@ -4,6 +4,19 @@ Tất cả các thay đổi và tiến độ phát triển của dự án Luyệ
 
 ---
 
+## [1.5.0] - 2026-05-21
+
+### Thêm mới (Added)
+- **Bao phủ nguồn HSK1 classic**: Thêm `docs/vocabulary/hsk1-classic-150.md` làm source note cho 150 từ HSK1 classic.
+- **Bổ sung chữ viết HSK1**: Trích 178 chữ Hán unique từ 150 từ HSK1 và bổ sung đủ vào `js/vocab-groups.js`.
+- **Mở rộng nhóm học**: Sắp xếp lại thành 10 nhóm chủ đề HSK1 dễ học hơn.
+
+### Kiểm chứng (Verified)
+- Kiểm tra 189/189 chữ active đều có dữ liệu `hanzi-writer-data@2.0.1`.
+- Kiểm tra stroke count local khớp CDN cho toàn bộ chữ active.
+
+---
+
 ## [1.4.0] - 2026-05-21
 
 ### Thay đổi (Changed)

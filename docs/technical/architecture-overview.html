@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chinese Writing Game — Architecture Overview</title>
+  <meta name="description" content="Tài liệu kiến trúc kỹ thuật của dự án Chinese Writing Game: Architecture, Workflow và Data Flow diagrams." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────── */
+    :root {
+      --bg-base:        #0e0f11;
+      --bg-surface:     #16181d;
+      --bg-elevated:    #1e2128;
+      --bg-card:        #252830;
+      --border:         rgba(255,255,255,0.07);
+      --border-accent:  rgba(255,255,255,0.12);
+
+      --coral:          #e87040;
+      --coral-light:    #f08b63;
+      --coral-dim:      rgba(232,112,64,0.12);
+      --coral-glow:     rgba(232,112,64,0.25);
+
+      --cyan:           #3ecfcf;
+      --cyan-dim:       rgba(62,207,207,0.10);
+      --violet:         #9b7ef8;
+      --violet-dim:     rgba(155,126,248,0.10);
+      --amber:          #f0b429;
+      --amber-dim:      rgba(240,180,41,0.10);
+      --green:          #3dd68c;
+      --green-dim:      rgba(61,214,140,0.10);
+      --rose:           #f06292;
+      --rose-dim:       rgba(240,98,146,0.10);
+
+      --text-primary:   #f0f0ed;
+      --text-secondary: #9ca3af;
+      --text-muted:     #6b7280;
+      --text-code:      #e2c08d;
+
+      --font-sans:      'Inter', system-ui, sans-serif;
+      --font-mono:      'JetBrains Mono', 'Fira Code', monospace;
+
+      --radius-sm:  6px;
+      --radius-md:  12px;
+      --radius-lg:  18px;
+      --radius-xl:  24px;
+
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.3);
+      --shadow-glow: 0 0 40px rgba(232,112,64,0.15);
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Noise texture overlay ──────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ─── Background gradient blobs ─────────────────────────── */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-blob-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,112,64,0.07) 0%, transparent 70%);
+      top: -200px; right: -100px;
+    }
+    .bg-blob-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(62,207,207,0.05) 0%, transparent 70%);
+      bottom: 100px; left: -150px;
+    }
+    .bg-blob-3 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(155,126,248,0.05) 0%, transparent 70%);
+      top: 50%; left: 40%;
+    }
+
+    /* ─── Layout ─────────────────────────────────────────────── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ─── Top Nav ────────────────────────────────────────────── */
+    .topnav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    .topnav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .topnav-brand .dot {
+      width: 8px; height: 8px;
+      background: var(--coral);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--coral);
+    }
+    .topnav-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ─── Hero ───────────────────────────────────────────────── */
+    .hero {
+      padding: 72px 0 56px;
+      position: relative;
+    }
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--coral-dim);
+      border: 1px solid rgba(232,112,64,0.2);
+      color: var(--coral-light);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    .hero-label svg { width: 12px; height: 12px; }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .hero h1 .accent { color: var(--coral); }
+    .hero-desc {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 640px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    /* ─── Stat chips ─────────────────────────────────────────── */
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+    .stat-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-accent);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .stat-chip:hover { border-color: var(--coral); color: var(--text-primary); }
+    .stat-chip .chip-icon {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+    }
+
+    /* ─── Section ────────────────────────────────────────────── */
+    .section {
+      margin-top: 72px;
+    }
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-index {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--coral);
+      letter-spacing: 0.05em;
+      padding-top: 4px;
+      min-width: 32px;
+    }
+    .section-title-group {}
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ─── Diagram card ───────────────────────────────────────── */
+    .diagram-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .diagram-card:hover {
+      border-color: var(--border-accent);
+      box-shadow: var(--shadow-card), var(--shadow-glow);
+    }
+    .diagram-card-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .toolbar-dots {
+      display: flex; gap: 6px;
+    }
+    .toolbar-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red   { background: #ff5f57; }
+    .dot-amber { background: #febc2e; }
+    .dot-green { background: #28c840; }
+    .toolbar-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+    .toolbar-type {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+    .type-flowchart { background: var(--cyan-dim);   color: var(--cyan);   border: 1px solid rgba(62,207,207,0.2); }
+    .type-state     { background: var(--violet-dim); color: var(--violet); border: 1px solid rgba(155,126,248,0.2); }
+    .type-sequence  { background: var(--amber-dim);  color: var(--amber);  border: 1px solid rgba(240,180,41,0.2); }
+
+    .diagram-body {
+      padding: 36px 24px;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .diagram-body .mermaid {
+      width: 100%;
+    }
+
+    /* Force Mermaid SVG to be light-readable on dark bg */
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* ─── Annotation grid ────────────────────────────────────── */
+    .annotation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .annotation-card {
+      padding: 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .annotation-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+    .annotation-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .annotation-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-primary);
+    }
+    .annotation-card p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* ─── Legend ─────────────────────────────────────────────── */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ─── Timeline (Data Flow) ───────────────────────────────── */
+    .flow-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 24px;
+    }
+    .flow-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .flow-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .flow-table tr:last-child td { border-bottom: none; }
+    .flow-table tr:hover td { background: var(--bg-elevated); }
+    .flow-table .from, .flow-table .to {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .flow-table .msg {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-code);
+      background: var(--bg-card);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .flow-table .dir {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    /* ─── State table ────────────────────────────────────────── */
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .state-node {
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .state-node::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+    }
+    .state-node.s-loading { background: var(--amber-dim);  border-color: rgba(240,180,41,0.2); }
+    .state-node.s-loading::before { background: var(--amber); }
+    .state-node.s-idle    { background: var(--cyan-dim);   border-color: rgba(62,207,207,0.2); }
+    .state-node.s-idle::before { background: var(--cyan); }
+    .state-node.s-preview { background: var(--violet-dim); border-color: rgba(155,126,248,0.2); }
+    .state-node.s-preview::before { background: var(--violet); }
+    .state-node.s-quiz    { background: var(--coral-dim);  border-color: rgba(232,112,64,0.2); }
+    .state-node.s-quiz::before { background: var(--coral); }
+    .state-node.s-done    { background: var(--green-dim);  border-color: rgba(61,214,140,0.2); }
+    .state-node.s-done::before { background: var(--green); }
+    .state-node.s-error   { background: var(--rose-dim);   border-color: rgba(240,98,146,0.2); }
+    .state-node.s-error::before { background: var(--rose); }
+    .state-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .state-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .state-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .s-loading .state-badge { background: rgba(240,180,41,0.15); color: var(--amber); }
+    .s-idle    .state-badge { background: rgba(62,207,207,0.15);  color: var(--cyan); }
+    .s-preview .state-badge { background: rgba(155,126,248,0.15); color: var(--violet); }
+    .s-quiz    .state-badge { background: rgba(232,112,64,0.15);  color: var(--coral); }
+    .s-done    .state-badge { background: rgba(61,214,140,0.15);  color: var(--green); }
+    .s-error   .state-badge { background: rgba(240,98,146,0.15);  color: var(--rose); }
+
+    /* ─── Footer ─────────────────────────────────────────────── */
+    .footer {
+      margin-top: 96px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-brand { font-size: 13px; color: var(--text-muted); }
+    .footer-meta  { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .hero { padding: 48px 0 40px; }
+      .section { margin-top: 52px; }
+      .diagram-body { padding: 20px 12px; }
+      .annotation-grid { grid-template-columns: 1fr; }
+      .state-grid { grid-template-columns: 1fr 1fr; }
+      .footer { flex-direction: column; gap: 8px; }
+    }
+
+    /* ─── Scrollbar ──────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- Background blobs -->
+<div class="bg-blob bg-blob-1"></div>
+<div class="bg-blob bg-blob-2"></div>
+<div class="bg-blob bg-blob-3"></div>
+
+<div class="wrapper">
+
+  <!-- Top Nav -->
+  <nav class="topnav">
+    <div class="topnav-brand">
+      <span class="dot"></span>
+      Chinese Writing Game
+    </div>
+    <div class="topnav-meta">CODEMAP.md · v1.0 · 2026-05-21</div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-label">
+      <svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>
+      Technical Architecture
+    </div>
+    <h1>Kiến trúc hệ thống<br /><span class="accent">Chinese Writing Game</span></h1>
+    <p class="hero-desc">
+      Ứng dụng luyện viết chữ Hán thuần tĩnh dành cho người học tiếng Trung.
+      Không backend, không build step — toàn bộ logic chạy trong trình duyệt,
+      sử dụng HanziWriter CDN và Web Audio API.
+    </p>
+    <div class="stat-row">
+      <div class="stat-chip">
+        <div class="chip-icon" style="background:var(--coral-dim);color:var(--coral);">◈</div>
+        Static HTML / CSS / JS
+      </div>
+      <div class="stat-chip">
+        <div class="chip-icon" style="background:var(--cyan-dim);color:var(--cyan);">⬡</div>
+        HanziWriter CDN
+      </div>
+      <div class="stat-chip">
+        <div class="chip-icon" style="background:var(--violet-dim);color:var(--violet);">▣</div>
+        7 nhóm từ vựng HSK1
+      </div>
+      <div class="stat-chip">
+        <div class="chip-icon" style="background:var(--green-dim);color:var(--green);">⬤</div>
+        localStorage persistence
+      </div>
+      <div class="stat-chip">
+        <div class="chip-icon" style="background:var(--amber-dim);color:var(--amber);">♪</div>
+        Web Audio API
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — ARCHITECTURE DIAGRAM
+  ════════════════════════════════════════════════════════ -->
+  <section class="section" id="architecture">
+    <div class="section-header">
+      <div class="section-index">01</div>
+      <div class="section-title-group">
+        <h2 class="section-title">Architecture Diagram</h2>
+        <p class="section-subtitle">Quan hệ phụ thuộc giữa các thành phần hệ thống từ User → Browser → Static files → CDN services → Browser APIs.</p>
+      </div>
+    </div>
+
+    <div class="diagram-card">
+      <div class="diagram-card-toolbar">
+        <div class="toolbar-dots">
+          <span class="dot-red"></span>
+          <span class="dot-amber"></span>
+          <span class="dot-green"></span>
+        </div>
+        <span class="toolbar-label">CODEMAP.md → Architecture Diagram</span>
+        <span class="toolbar-type type-flowchart">Flowchart TB</span>
+      </div>
+      <div class="diagram-body">
+        <div class="mermaid" id="arch-diagram">
+%%{init: {
+  'theme': 'dark',
+  'themeVariables': {
+    'primaryColor': '#1e2128',
+    'primaryTextColor': '#f0f0ed',
+    'primaryBorderColor': '#e87040',
+    'lineColor': '#3ecfcf',
+    'secondaryColor': '#252830',
+    'tertiaryColor': '#16181d',
+    'fontFamily': 'Inter, sans-serif',
+    'fontSize': '14px',
+    'nodeBorder': '#444',
+    'clusterBkg': '#1a1d24',
+    'edgeLabelBackground': '#1e2128'
+  }
+}}%%
+flowchart TB
+  User["👤 User"]
+  Browser["🌐 Browser"]
+  Html["📄 chinese-writing-game.html\nApp Shell & DOM Contract"]
+  Css["🎨 css/chinese-writing-game.css\nVisual System"]
+  Data["📦 js/vocab-groups.js\nStatic Learning Content"]
+  App["⚙️ js/app.js\nGame Controller"]
+  HanziWriter["✍️ HanziWriter CDN\njsDelivr · unpkg"]
+  StrokeData["🗂️ hanzi-writer-data CDN\nStroke JSON per character"]
+  LocalStorage[("💾 localStorage\nhz_xp · hz_streak\nhz_completed_chars")]
+  WebAudio["🔊 Web Audio API\nSFX & feedback sounds"]
+
+  User --> Browser
+  Browser --> Html
+  Html --> Css
+  Html --> Data
+  Html --> App
+  App --> Data
+  App --> HanziWriter
+  App --> StrokeData
+  App --> LocalStorage
+  App --> WebAudio
+  App --> Html
+        </div>
+      </div>
+    </div>
+
+    <!-- Annotation cards -->
+    <div class="annotation-grid">
+      <div class="annotation-card">
+        <div class="annotation-icon" style="background:var(--coral-dim);color:var(--coral);">📄</div>
+        <h4>App Shell (HTML)</h4>
+        <p>Định nghĩa DOM contract, load stylesheet, data file và game logic theo thứ tự cố định.</p>
+      </div>
+      <div class="annotation-card">
+        <div class="annotation-icon" style="background:var(--cyan-dim);color:var(--cyan);">⚙️</div>
+        <h4>Game Controller (JS)</h4>
+        <p>Owns toàn bộ state machine, xử lý HanziWriter events, scoring, XP, confetti và audio.</p>
+      </div>
+      <div class="annotation-card">
+        <div class="annotation-icon" style="background:var(--violet-dim);color:var(--violet);">✍️</div>
+        <h4>HanziWriter CDN</h4>
+        <p>Thư viện vẽ nét chữ Hán. Load từ jsDelivr → unpkg theo thứ tự fallback để đảm bảo availability.</p>
+      </div>
+      <div class="annotation-card">
+        <div class="annotation-icon" style="background:var(--green-dim);color:var(--green);">💾</div>
+        <h4>localStorage</h4>
+        <p>Lưu trữ XP, streak, ngày học và ký tự đã hoàn thành qua key prefix <code style="font-family:var(--font-mono);font-size:11px;color:var(--text-code)">hz_*</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — WORKFLOW DIAGRAM
+  ════════════════════════════════════════════════════════ -->
+  <section class="section" id="workflow">
+    <div class="section-header">
+      <div class="section-index">02</div>
+      <div class="section-title-group">
+        <h2 class="section-title">Workflow Diagram</h2>
+        <p class="section-subtitle">State machine của game: từ khởi động đến preview animation, quiz tương tác và completion. Mỗi state kiểm soát button lock và UI mode badge.</p>
+      </div>
+    </div>
+
+    <div class="diagram-card">
+      <div class="diagram-card-toolbar">
+        <div class="toolbar-dots">
+          <span class="dot-red"></span>
+          <span class="dot-amber"></span>
+          <span class="dot-green"></span>
+        </div>
+        <span class="toolbar-label">CODEMAP.md → Workflow Diagram</span>
+        <span class="toolbar-type type-state">State Machine</span>
+      </div>
+      <div class="diagram-body">
+        <div class="mermaid" id="workflow-diagram">
+%%{init: {
+  'theme': 'dark',
+  'themeVariables': {
+    'primaryColor': '#1e2128',
+    'primaryTextColor': '#f0f0ed',
+    'primaryBorderColor': '#9b7ef8',
+    'lineColor': '#9b7ef8',
+    'secondaryColor': '#252830',
+    'fontFamily': 'Inter, sans-serif',
+    'fontSize': '14px'
+  }
+}}%%
+stateDiagram-v2
+  [*] --> Loading
+  Loading --> Idle : ✅ HanziWriter loaded
+  Loading --> Error : ❌ CDN failure
+
+  Idle --> Preview : "Xem nét" — animate strokes
+  Preview --> Idle : animation complete
+
+  Idle --> Quiz : "Luyện viết" — start quiz
+  Quiz --> Quiz : ✍️ correct stroke (+10 XP)
+  Quiz --> Quiz : ⚠️ mistake (increment attempts)
+  Quiz --> Done : 🎉 all strokes correct
+
+  Done --> Idle : 🔄 reset
+  Done --> Idle : ⏭️ next character
+  Idle --> Idle : 🔀 select group / character
+  Error --> [*]
+        </div>
+      </div>
+    </div>
+
+    <!-- State nodes -->
+    <div class="state-grid">
+      <div class="state-node s-loading">
+        <span class="state-badge">Loading</span>
+        <div class="state-name">⏳ Loading</div>
+        <div class="state-desc">HanziWriter đang được tải từ CDN. Tất cả controls bị disable.</div>
+      </div>
+      <div class="state-node s-idle">
+        <span class="state-badge">Idle</span>
+        <div class="state-name">○ Idle</div>
+        <div class="state-desc">Trạng thái chờ. User có thể chọn nhóm, ký tự hoặc bắt đầu preview/quiz.</div>
+      </div>
+      <div class="state-node s-preview">
+        <span class="state-badge">Preview</span>
+        <div class="state-name">▶ Preview</div>
+        <div class="state-desc">HanziWriter đang animate nét chữ. Navigation bị lock đến khi animation kết thúc.</div>
+      </div>
+      <div class="state-node s-quiz">
+        <span class="state-badge">Quiz</span>
+        <div class="state-name">✏️ Quiz</div>
+        <div class="state-desc">User đang vẽ nét. Mỗi nét đúng +10 XP, nét sai tăng attempt counter.</div>
+      </div>
+      <div class="state-node s-done">
+        <span class="state-badge">Done</span>
+        <div class="state-name">🎉 Done</div>
+        <div class="state-desc">Hoàn thành ký tự. Confetti, completion XP, streak update và overlay hiển thị.</div>
+      </div>
+      <div class="state-node s-error">
+        <span class="state-badge">Error</span>
+        <div class="state-name">❌ Error</div>
+        <div class="state-desc">CDN failure. Status bubble hiển thị lỗi, game controls bị vô hiệu hóa hoàn toàn.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 3 — DATA FLOW DIAGRAM
+  ════════════════════════════════════════════════════════ -->
+  <section class="section" id="dataflow">
+    <div class="section-header">
+      <div class="section-index">03</div>
+      <div class="section-title-group">
+        <h2 class="section-title">Data Flow Diagram</h2>
+        <p class="section-subtitle">Luồng dữ liệu theo thời gian từ khởi tạo app, chọn ký tự, tải stroke JSON từ CDN đến xử lý quiz events và persist state.</p>
+      </div>
+    </div>
+
+    <div class="diagram-card">
+      <div class="diagram-card-toolbar">
+        <div class="toolbar-dots">
+          <span class="dot-red"></span>
+          <span class="dot-amber"></span>
+          <span class="dot-green"></span>
+        </div>
+        <span class="toolbar-label">CODEMAP.md → Data Flow Diagram</span>
+        <span class="toolbar-type type-sequence">Sequence</span>
+      </div>
+      <div class="diagram-body">
+        <div class="mermaid" id="dataflow-diagram">
+%%{init: {
+  'theme': 'dark',
+  'themeVariables': {
+    'primaryColor': '#1e2128',
+    'primaryTextColor': '#f0f0ed',
+    'primaryBorderColor': '#f0b429',
+    'lineColor': '#f0b429',
+    'secondaryColor': '#252830',
+    'fontFamily': 'Inter, sans-serif',
+    'fontSize': '13px',
+    'activationBkgColor': 'rgba(240,180,41,0.1)',
+    'activationBorderColor': '#f0b429',
+    'noteBkgColor': '#1e2128',
+    'noteTextColor': '#9ca3af',
+    'noteBorderColor': '#444'
+  }
+}}%%
+sequenceDiagram
+  participant U as 👤 User
+  participant DOM as 🖥️ HTML DOM
+  participant APP as ⚙️ js/app.js
+  participant VOCAB as 📦 GROUPS
+  participant HW as ✍️ HanziWriter
+  participant CDN as 🌐 CDN Data
+  participant LS as 💾 localStorage
+
+  note over APP,VOCAB: Startup — init()
+  APP->>VOCAB: read groups and chars
+  APP->>DOM: render group tabs and char selector
+
+  note over U,APP: Character Selection
+  U->>DOM: select character
+  DOM->>APP: selectChar(index)
+  APP->>HW: create writer(currentChar)
+
+  note over HW,CDN: Stroke Data Loading
+  HW->>APP: charDataLoader(char)
+  APP->>CDN: fetch char JSON
+  CDN-->>APP: strokes, medians, radStrokes
+  APP-->>HW: onComplete(data)
+
+  note over U,LS: Quiz Interaction
+  U->>DOM: draw stroke
+  HW->>APP: onCorrectStroke / onMistake
+  APP->>DOM: update progress, score, mascot, stroke colors
+  APP->>LS: persist XP, streak, completed chars
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow steps table -->
+    <table class="flow-table" style="margin-top:24px;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Từ</th>
+          <th></th>
+          <th>Đến</th>
+          <th>Thông điệp / Action</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">01</span></td>
+          <td><span class="from" style="color:var(--coral)">APP</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--cyan)">VOCAB</span></td>
+          <td><span class="msg">read groups and chars</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">Startup: đọc 7 nhóm từ vựng HSK1</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">02</span></td>
+          <td><span class="from" style="color:var(--coral)">APP</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--cyan)">DOM</span></td>
+          <td><span class="msg">render group tabs, char selector</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">buildGroupTabs() + buildCharSelector()</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">03</span></td>
+          <td><span class="from" style="color:var(--violet)">User</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--cyan)">DOM</span></td>
+          <td><span class="msg">select character</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">Click .char-btn</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">04</span></td>
+          <td><span class="from" style="color:var(--cyan)">DOM</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--coral)">APP</span></td>
+          <td><span class="msg">selectChar(index)</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">Trigger qua onclick attribute</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">05</span></td>
+          <td><span class="from" style="color:var(--coral)">APP</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--amber)">HW</span></td>
+          <td><span class="msg">create writer(currentChar)</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">initWriter() — mount vào #hanzi-container</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">06</span></td>
+          <td><span class="from" style="color:var(--amber)">HW</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--coral)">APP</span></td>
+          <td><span class="msg">charDataLoader(char)</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">HW yêu cầu stroke data</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">07</span></td>
+          <td><span class="from" style="color:var(--coral)">APP</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--text-secondary)">CDN</span></td>
+          <td><span class="msg">fetch char JSON</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">jsDelivr hoặc unpkg fallback</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">08</span></td>
+          <td><span class="from" style="color:var(--text-secondary)">CDN</span></td>
+          <td class="dir">↩</td>
+          <td><span class="to" style="color:var(--coral)">APP</span></td>
+          <td><span class="msg">strokes, medians, radStrokes</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">JSON chứa đủ thông tin vẽ nét</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">09</span></td>
+          <td><span class="from" style="color:var(--violet)">User</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--cyan)">DOM</span></td>
+          <td><span class="msg">draw stroke</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">Pointer/touch event trên canvas</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">10</span></td>
+          <td><span class="from" style="color:var(--amber)">HW</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--coral)">APP</span></td>
+          <td><span class="msg">onCorrectStroke / onMistake</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">Callback từ HanziWriter quiz API</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">11</span></td>
+          <td><span class="from" style="color:var(--coral)">APP</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--cyan)">DOM</span></td>
+          <td><span class="msg">update progress, score, mascot</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">Stroke dots, progress bar, mode badge</td>
+        </tr>
+        <tr>
+          <td><span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">12</span></td>
+          <td><span class="from" style="color:var(--coral)">APP</span></td>
+          <td class="dir">→</td>
+          <td><span class="to" style="color:var(--green)">LS</span></td>
+          <td><span class="msg">persist XP, streak, completed chars</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">Keys: hz_xp, hz_streak, hz_completed_chars</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-brand">Chinese Writing Game · Architecture Overview · Generated from <code style="font-family:var(--font-mono);font-size:11px">CODEMAP.md</code></div>
+    <div class="footer-meta">2026-05-21 · Scope: product code only</div>
+  </footer>
+
+</div><!-- /wrapper -->
+
+<script>
+  // Initialize Mermaid with dark theme
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: {
+      curve: 'basis',
+      padding: 20,
+      useMaxWidth: true,
+      htmlLabels: true,
+    },
+    sequence: {
+      useMaxWidth: true,
+      showSequenceNumbers: false,
+      actorMargin: 60,
+      messageMargin: 35,
+      mirrorActors: false,
+      wrap: true,
+    },
+    stateDiagram: {
+      useMaxWidth: true,
+    },
+    fontFamily: 'Inter, sans-serif',
+  });
+
+  // Subtle scroll animation for sections
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    },
+    { threshold: 0.05 }
+  );
+
+  document.querySelectorAll('.section').forEach((el) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
