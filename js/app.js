@@ -931,3 +931,90 @@ function setStatus(type, msg) {
   initWriter();
   setStatus('idle', 'Nhấn "Xem nét" để xem thứ tự, hoặc "Luyện viết" để bắt đầu');
 })();
+
+// ── Feedback Modal Handlers ──
+function openFeedback() {
+  const modal = document.getElementById('feedback-modal');
+  const form = document.getElementById('feedback-form');
+  const formContainer = document.getElementById('feedback-form-container');
+  const successContainer = document.getElementById('feedback-success-container');
+  const submitBtn = document.querySelector('#feedback-form button[type="submit"]');
+  
+  if (form) form.reset();
+  if (formContainer) formContainer.style.display = 'block';
+  if (successContainer) successContainer.style.display = 'none';
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Cảm ơn bạn - Gửi';
+  }
+  
+  if (modal) modal.classList.add('show');
+  initAudio();
+}
+
+function closeFeedback() {
+  const modal = document.getElementById('feedback-modal');
+  if (modal) modal.classList.remove('show');
+  initAudio();
+}
+
+async function submitFeedback(event) {
+  event.preventDefault();
+  
+  const difficultyEl = document.getElementById('fb-difficulty');
+  const featuresEl = document.getElementById('fb-features');
+  const submitBtn = document.querySelector('#feedback-form button[type="submit"]');
+  
+  const difficultyVal = difficultyEl ? difficultyEl.value.trim() : '';
+  const featuresVal = featuresEl ? featuresEl.value.trim() : '';
+  
+  if (!difficultyVal && !featuresVal) return;
+  
+  // Disable button to prevent double click
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Đang gửi...';
+  }
+  
+  let submitSuccess = false;
+  
+  try {
+    const response = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        difficulty: difficultyVal,
+        features: featuresVal
+      })
+    });
+    
+    if (response.ok) {
+      submitSuccess = true;
+    } else {
+      const errData = await response.json();
+      console.warn('API submission failed:', errData);
+    }
+  } catch (err) {
+    console.error('API request error:', err);
+  }
+  
+  if (submitSuccess) {
+    // Hiện giao diện thành công
+    const formContainer = document.getElementById('feedback-form-container');
+    const successContainer = document.getElementById('feedback-success-container');
+    if (formContainer) formContainer.style.display = 'none';
+    if (successContainer) successContainer.style.display = 'block';
+    
+    playSFX('complete');
+  } else {
+    // Thông báo lỗi cho Mascot và khôi phục nút bấm để người dùng có thể gửi lại
+    updateMascot('wrong', '⚠️ Gửi góp ý thất bại. Vui lòng kiểm tra lại kết nối mạng!');
+    alert('Không thể gửi góp ý lên server. Vui lòng kiểm tra lại kết nối mạng hoặc liên hệ quản trị viên để cấu hình GITHUB_TOKEN.');
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Cảm ơn bạn - Gửi';
+    }
+  }
+}

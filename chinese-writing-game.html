@@ -161,8 +161,9 @@
   </div>
 
   <!-- Footer -->
-  <footer style="text-align:center;padding:12px 0 18px;font-size:0.75rem;color:#aaa;letter-spacing:0.04em;">
-    made by <a href="https://github.com/tranhieutt" target="_blank" rel="noopener" style="color:#aaa;text-decoration:none;">tranhieutt</a>
+  <footer style="text-align:center;padding:12px 0 18px;font-size:0.75rem;color:#aaa;letter-spacing:0.04em;display:flex;flex-direction:column;gap:4px;align-items:center;">
+    <div>made by <a href="https://github.com/tranhieutt" target="_blank" rel="noopener" style="color:#aaa;text-decoration:none;">tranhieutt</a></div>
+    <div><button id="btn-feedback" class="footer-feedback-btn" onclick="openFeedback()">Bạn muốn góp ý sản phẩm?</button></div>
   </footer>
 </div>
 
@@ -194,6 +195,56 @@
       </div>
     </div>
     <button class="btn btn-primary modal-ok-btn" onclick="closeHelp()">Bắt đầu học ngay!</button>
+  </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedback-modal" class="modal-backdrop">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeFeedback()">&times;</button>
+    <h3 class="modal-title" style="margin-bottom: 12px;">📝 Góp ý sản phẩm</h3>
+    
+    <div id="feedback-form-container">
+      <form id="feedback-form" onsubmit="submitFeedback(event)">
+        <div class="modal-body" style="gap: 12px; margin-bottom: 18px;">
+          <div class="feedback-field">
+            <label class="feedback-label" for="fb-difficulty">Bạn có gặp khó khăn gì khi sử dụng không?</label>
+            <textarea class="feedback-textarea" id="fb-difficulty" placeholder="Ví dụ: Vẽ nét chưa nhạy, game tải chậm..." required></textarea>
+          </div>
+          <div class="feedback-field">
+            <label class="feedback-label" for="fb-features">Bạn muốn sản phẩm có thêm tính năng gì?</label>
+            <textarea class="feedback-textarea" id="fb-features" placeholder="Ví dụ: Chế độ ôn tập từ vựng, bảng xếp hạng..." required></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary modal-ok-btn">Cảm ơn bạn - Gửi</button>
+      </form>
+    </div>
+    
+    <!-- Success state (hidden by default) -->
+    <div id="feedback-success-container" style="display: none; text-align: center; padding: 10px 0;">
+      <div style="margin-bottom: 12px;">
+        <svg viewBox="0 0 100 100" style="width: 80px; height: 80px; transform: scale(1.1);">
+          <circle cx="50" cy="55" r="33" fill="#ffffff" stroke="#21394f" stroke-width="3" />
+          <circle cx="23" cy="29" r="11" fill="#21394f" />
+          <circle cx="77" cy="29" r="11" fill="#21394f" />
+          <circle cx="23" cy="29" r="6" fill="#ead8bd" />
+          <circle cx="77" cy="29" r="6" fill="#ead8bd" />
+          <ellipse cx="38" cy="49" rx="8" ry="10" transform="rotate(-15 38 49)" fill="#21394f" />
+          <ellipse cx="62" cy="49" rx="8" ry="10" transform="rotate(15 62 49)" fill="#21394f" />
+          <circle cx="39" cy="48" r="3" fill="#ffffff" />
+          <circle cx="61" cy="48" r="3" fill="#ffffff" />
+          <circle cx="39" cy="48" r="1.2" fill="#21394f" />
+          <circle cx="61" cy="48" r="1.2" fill="#21394f" />
+          <ellipse cx="50" cy="58" rx="4.5" ry="3" fill="#21394f" />
+          <path d="M44 61 Q50 67 56 61" fill="none" stroke="#21394f" stroke-width="2.5" stroke-linecap="round" />
+          <circle cx="26" cy="57" r="3.5" fill="#f3d1cc" />
+          <circle cx="74" cy="57" r="3.5" fill="#f3d1cc" />
+        </svg>
+      </div>
+      <h4 style="font-family: 'Noto Serif SC', serif; font-size: 20px; color: var(--ds-ink); margin-bottom: 8px;">Cảm ơn bạn rất nhiều!</h4>
+      <p style="font-size: 13.5px; color: var(--ds-ink); line-height: 1.45; margin-bottom: 20px;">Ý kiến đóng góp của bạn đã được ghi nhận. Tớ sẽ cố gắng cải thiện game tốt hơn mỗi ngày! 🐼</p>
+      <button type="button" class="btn btn-primary modal-ok-btn" onclick="closeFeedback()">Đóng</button>
+    </div>
   </div>
 </div>
 

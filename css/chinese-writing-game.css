@@ -1730,4 +1730,65 @@ body::after {
   }
 }
 
+/* ── Feedback Modal Elements ── */
+.feedback-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.feedback-label {
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ds-ink);
+  line-height: 1.35;
+}
+
+.feedback-textarea {
+  width: 100%;
+  min-height: 80px;
+  max-height: 140px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid var(--ds-line);
+  background: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  color: var(--ds-ink);
+  outline: none;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.feedback-textarea:focus {
+  border-color: var(--ds-blueprint);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--ds-blueprint-soft);
+}
+
+.feedback-textarea::placeholder {
+  color: var(--ds-pencil);
+  opacity: 0.6;
+}
+
+.footer-feedback-btn {
+  background: none;
+  border: none;
+  color: var(--ds-pencil);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+  padding: 2px 8px;
+  transition: color 0.15s ease;
+  margin-top: 4px;
+}
+
+.footer-feedback-btn:hover {
+  color: var(--ds-blueprint);
+}
+
 
