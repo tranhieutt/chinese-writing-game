@@ -24,11 +24,16 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body {
-  min-height: 100dvh;
-  overflow-y: auto;
+html {
+  height: 100%;
+  overflow-y: visible;
   overscroll-behavior-y: contain;
   overscroll-behavior-x: none;
+}
+
+body {
+  min-height: 100%;
+  overflow-y: auto;
 }
 
 body {
@@ -1070,7 +1075,11 @@ body::after {
     gap: 4px;
   }
 
-  html, body {
+  html {
+    height: 100dvh;
+    overflow: hidden;
+  }
+  body {
     height: 100dvh;
     overflow: hidden;
   }
@@ -1626,6 +1635,26 @@ body::after {
   50% {
     transform: scale(1.03) rotate(-0.5deg);
     box-shadow: 4px 8px 12px rgba(33, 57, 79, 0.22);
+  }
+}
+
+/* ── Desktop scroll fix (481px+): let body grow naturally ── */
+@media (min-width: 481px) {
+  html, body {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .container {
+    flex: none;
+    min-height: unset;
+    overflow-y: visible;
+    overflow-x: visible;
+  }
+
+  .main-card {
+    flex: none;
+    min-height: unset;
   }
 }
 

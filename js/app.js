@@ -569,6 +569,7 @@ function initWriter(onReady) {
 
   initStrokeObserver();
 
+
   if (onReady) {
     setTimeout(onReady, 600);
   }
