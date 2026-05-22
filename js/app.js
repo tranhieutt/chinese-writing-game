@@ -224,6 +224,87 @@ function closeHelp() {
   initAudio();
 }
 
+function ensureResetProgressUI() {
+  const resetBtn = document.getElementById('btn-reset');
+  if (resetBtn && !document.getElementById('btn-reset-progress')) {
+    const progressBtn = document.createElement('button');
+    progressBtn.id = 'btn-reset-progress';
+    progressBtn.className = 'btn btn-ghost';
+    progressBtn.type = 'button';
+    progressBtn.innerHTML = '🧹<span class="btn-text"> Học lại từ đầu</span>';
+    progressBtn.onclick = openResetProgressConfirm;
+    resetBtn.insertAdjacentElement('afterend', progressBtn);
+  }
+
+  if (!document.getElementById('reset-progress-modal')) {
+    const modal = document.createElement('div');
+    modal.id = 'reset-progress-modal';
+    modal.className = 'modal-backdrop';
+    modal.innerHTML = `
+      <div class="modal-card">
+        <button class="modal-close" type="button" onclick="closeResetProgressConfirm()">&times;</button>
+        <h3 class="modal-title">Học lại từ đầu?</h3>
+        <div class="modal-body">
+          <p style="margin:0;text-align:center;font-family:var(--font-main);font-size:14px;line-height:1.5;color:var(--ds-ink);">
+            Bạn có chắc chắn muốn xóa hết thành tích và học lại từ đầu không?
+          </p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" class="btn btn-ghost" onclick="closeResetProgressConfirm()">Hủy</button>
+          <button type="button" class="btn btn-primary" onclick="confirmResetProgress()">Xác nhận</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+}
+
+function openResetProgressConfirm() {
+  ensureResetProgressUI();
+  const modal = document.getElementById('reset-progress-modal');
+  if (modal) modal.classList.add('show');
+  initAudio();
+}
+
+function closeResetProgressConfirm() {
+  const modal = document.getElementById('reset-progress-modal');
+  if (modal) modal.classList.remove('show');
+  initAudio();
+}
+
+function confirmResetProgress() {
+  ['hz_xp', 'hz_streak', 'hz_last_date', 'hz_completed_chars'].forEach(key => {
+    localStorage.removeItem(key);
+  });
+
+  xp = 0;
+  level = 1;
+  streak = 0;
+  scoreCorrect = 0;
+  scoreAttempts = 0;
+  scoreChars = 0;
+  completedChars = new Set();
+
+  const xpEl = document.getElementById('user-xp');
+  const levelEl = document.getElementById('user-level');
+  const streakEl = document.getElementById('user-streak');
+  const correctEl = document.getElementById('score-correct');
+  const attemptsEl = document.getElementById('score-attempts');
+  const charsEl = document.getElementById('score-chars');
+
+  if (xpEl) xpEl.textContent = xp;
+  if (levelEl) levelEl.textContent = level;
+  if (streakEl) streakEl.textContent = streak;
+  if (correctEl) correctEl.textContent = scoreCorrect;
+  if (attemptsEl) attemptsEl.textContent = scoreAttempts;
+  if (charsEl) charsEl.textContent = scoreChars;
+
+  updateLevelProgressBar();
+  closeResetProgressConfirm();
+  resetChar();
+  setStatus('idle', 'Đã xóa thành tích. Bắt đầu học lại từ đầu nhé!');
+}
+
 // ── Gamification State & Sync ──
 function loadGamification() {
   xp = parseInt(localStorage.getItem('hz_xp') || '0', 10);
@@ -911,6 +992,7 @@ function setStatus(type, msg) {
 (async function init() {
   confettiCanvas = document.getElementById('confetti-canvas');
   confettiCtx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
+  ensureResetProgressUI();
   loadGamification();
   buildGroupTabs();
   buildCharSelector();
