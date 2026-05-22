@@ -12,7 +12,7 @@
 <div class="header">
   <div class="header-main-row">
     <div class="header-branding">
-      <div class="header-owl">🦉</div>
+      <div class="header-owl" aria-label="Panda mascot">🐼</div>
       <div class="header-text-group">
         <div class="header-title">Luyện Viết <span>Chữ Hán</span></div>
         <div class="header-sub">Học viết đúng thứ tự nét bút · 練字</div>
@@ -70,8 +70,14 @@
       <div class="char-display" id="char-display">-</div>
       <div class="char-pinyin" id="char-pinyin">-</div>
       <div class="char-pronounce-row">
+        <button id="btn-animate" class="btn-side-animate btn-side-vertical" onclick="animateStrokes()">
+          🖌️ Xem nét
+        </button>
         <button id="btn-pronounce" class="btn-pronounce" onclick="pronounceChar()" title="Nghe phát âm tiếng Trung">
           🔊 Phát âm
+        </button>
+        <button id="btn-quiz" class="btn-side-quiz btn-side-vertical" onclick="startQuiz()">
+          ✏️ Luyện viết
         </button>
       </div>
       <div class="char-meaning" id="char-meaning">-</div>
@@ -82,9 +88,6 @@
     <div class="canvas-area-container">
       <div class="canvas-side-col">
         <button id="btn-prev" class="btn btn-floating-nav" onclick="prevChar()" title="Chữ trước">⬅️</button>
-        <button id="btn-animate" class="btn btn-side-animate btn-side-vertical" onclick="animateStrokes()">
-          🖌️ Xem nét
-        </button>
       </div>
 
       <div class="canvas-wrapper">
@@ -100,9 +103,6 @@
 
       <div class="canvas-side-col">
         <button id="btn-next" class="btn btn-floating-nav" onclick="nextChar()" title="Chữ sau">➡️</button>
-        <button id="btn-quiz" class="btn btn-side-quiz btn-side-vertical" onclick="startQuiz()">
-          ✏️ Luyện viết
-        </button>
       </div>
     </div>
 
