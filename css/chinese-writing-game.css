@@ -311,6 +311,60 @@ body {
   box-shadow: 0 2px 0 var(--color-sunshine-shadow);
 }
 
+/* ── Pronunciation button ── */
+.char-pronounce-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0 0;
+}
+
+.btn-pronounce {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 16px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-sky-blue);
+  background: transparent;
+  color: var(--color-sky-blue);
+  font-family: var(--font-main);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.18s, color 0.18s, transform 0.14s, box-shadow 0.14s;
+}
+
+.btn-pronounce:hover:not(:disabled) {
+  background: var(--color-sky-blue);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--color-sky-blue-shadow);
+}
+
+.btn-pronounce:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.btn-pronounce:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.btn-pronounce.pronouncing {
+  background: var(--color-sky-blue);
+  color: #fff;
+  box-shadow: 0 3px 0 var(--color-sky-blue-shadow);
+  animation: pronounce-pulse 0.7s ease-in-out infinite alternate;
+}
+
+@keyframes pronounce-pulse {
+  from { box-shadow: 0 3px 0 var(--color-sky-blue-shadow), 0 0 0 0 rgba(28,176,246,0.4); }
+  to   { box-shadow: 0 3px 0 var(--color-sky-blue-shadow), 0 0 0 7px rgba(28,176,246,0); }
+}
+
 /* ── Canvas ── */
 .canvas-wrapper {
   position: relative;
@@ -854,6 +908,24 @@ body::after {
   color: var(--ds-ink);
   background: linear-gradient(135deg, #f7df98, #e6bb65);
   box-shadow: 2px 3px 0 rgba(33, 57, 79, 0.14);
+}
+
+/* Design system override cho nút phát âm */
+.btn-pronounce {
+  border-color: var(--ds-blueprint);
+  color: var(--ds-blueprint);
+  font-family: "Noto Serif SC", "Nunito Sans", serif;
+}
+.btn-pronounce:hover:not(:disabled),
+.btn-pronounce.pronouncing {
+  background: var(--ds-blueprint);
+  border-color: var(--ds-ink);
+  color: #fffaf0;
+  box-shadow: 0 3px 0 rgba(33, 57, 79, 0.18), 0 0 0 3px rgba(78,136,173,0.18);
+}
+@keyframes pronounce-pulse {
+  from { box-shadow: 0 3px 0 rgba(33,57,79,0.18), 0 0 0 0 rgba(78,136,173,0.4); }
+  to   { box-shadow: 0 3px 0 rgba(33,57,79,0.18), 0 0 0 8px rgba(78,136,173,0); }
 }
 
 .canvas-wrapper {

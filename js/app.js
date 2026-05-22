@@ -134,7 +134,81 @@ function toggleMute() {
   if (btn) {
     btn.textContent = isMuted ? '🔇' : '🔊';
   }
+  // Dừng phát âm nếu đang phát và user bật mute
+  if (isMuted && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    const pronounceBtn = document.getElementById('btn-pronounce');
+    if (pronounceBtn) {
+      pronounceBtn.classList.remove('pronouncing');
+      pronounceBtn.textContent = '🔊 Phát âm';
+    }
+  }
   initAudio();
+}
+
+// ── Phát âm chữ Hán bằng Web Speech API ──
+function pronounceChar() {
+  if (isMuted) return;
+  if (!currentChar || !currentChar.char) return;
+
+  if (!window.speechSynthesis) {
+    updateMascot('wrong', '⚠️ Trình duyệt không hỗ trợ phát âm. Hãy dùng Chrome hoặc Edge!');
+    return;
+  }
+
+  // Hủy bất kỳ giọng đọc nào đang phát
+  window.speechSynthesis.cancel();
+
+  const utter = new SpeechSynthesisUtterance(currentChar.char);
+  utter.lang = 'zh-CN';
+  utter.rate = 0.85;   // Hơi chậm để dễ nghe
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+
+  // Tìm giọng tiếng Trung tốt nhất sẵn có
+  const voices = window.speechSynthesis.getVoices();
+  const zhVoice =
+    voices.find(v => v.lang === 'zh-CN' && v.localService) ||
+    voices.find(v => v.lang === 'zh-CN') ||
+    voices.find(v => v.lang === 'zh-TW') ||
+    voices.find(v => v.lang.startsWith('zh'));
+  if (zhVoice) utter.voice = zhVoice;
+
+  // Visual feedback: nút chuyển sang trạng thái "đang phát"
+  const btn = document.getElementById('btn-pronounce');
+  if (btn) {
+    btn.classList.add('pronouncing');
+    btn.textContent = '🔉 Đang phát...';
+    btn.disabled = true;
+  }
+
+  utter.onend = () => {
+    if (btn) {
+      btn.classList.remove('pronouncing');
+      btn.textContent = '🔊 Phát âm';
+      btn.disabled = false;
+    }
+  };
+  utter.onerror = () => {
+    if (btn) {
+      btn.classList.remove('pronouncing');
+      btn.textContent = '🔊 Phát âm';
+      btn.disabled = false;
+    }
+  };
+
+  // Chrome bug workaround: getVoices() async
+  if (voices.length === 0) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      const v2 = window.speechSynthesis.getVoices();
+      const zh = v2.find(v => v.lang.startsWith('zh'));
+      if (zh) utter.voice = zh;
+      window.speechSynthesis.speak(utter);
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  } else {
+    window.speechSynthesis.speak(utter);
+  }
 }
 
 // ── Help Modal Handlers ──
@@ -472,6 +546,14 @@ function buildCharSelector() {
 function selectChar(idx) {
   if (strokeObserver) strokeObserver.disconnect();
   Object.keys(strokeColorMap).forEach(k => delete strokeColorMap[k]);
+  // Hủy phát âm đang chạy khi đổi chữ
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  const pronounceBtn = document.getElementById('btn-pronounce');
+  if (pronounceBtn) {
+    pronounceBtn.classList.remove('pronouncing');
+    pronounceBtn.textContent = '🔊 Phát âm';
+    pronounceBtn.disabled = false;
+  }
   currentChar = currentGroup.chars[idx];
   document.querySelectorAll('.char-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
 
@@ -602,6 +684,12 @@ function updateControlsState() {
   if (btnReset) btnReset.disabled = false;
   if (btnPrev) btnPrev.disabled = isLocked;
   if (btnNext) btnNext.disabled = isLocked;
+
+  // Nút phát âm: disable khi đang xem nét (preview) vì chữ đang animate
+  const btnPronounce = document.getElementById('btn-pronounce');
+  if (btnPronounce && !btnPronounce.classList.contains('pronouncing')) {
+    btnPronounce.disabled = (mode === 'preview');
+  }
 
   groupTabs.forEach(t => t.disabled = isLocked);
   charBtns.forEach(b => b.disabled = isLocked);
