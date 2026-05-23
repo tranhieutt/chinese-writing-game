@@ -1177,7 +1177,7 @@ body::after {
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .btn-side-vertical,
   .btn-pronounce {
     height: 38px;
@@ -1230,6 +1230,7 @@ body::after {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: rgba(33, 57, 79, 0.2) transparent;
+    touch-action: pan-x !important; /* Cho phép drag/swipe ngang mượt mà trên mobile */
   }
 
   .group-tabs::-webkit-scrollbar, .char-selector::-webkit-scrollbar {
@@ -1398,8 +1399,12 @@ body::after {
     min-height: 36px;
   }
 
-  .char-btn, .group-tab, .mute-btn, .btn-help-icon {
+  .mute-btn, .btn-help-icon {
     touch-action: manipulation;
+  }
+
+  .char-btn, .group-tab {
+    touch-action: pan-x !important; /* Ngăn chặn việc chặn swipe ngang trên nút bấm */
   }
 
   .modal-card {
@@ -1753,7 +1758,7 @@ body::after {
 }
 
 /* ── Desktop scroll fix (481px+): let body grow naturally ── */
-@media (min-width: 481px) {
+@media (min-width: 769px) {
   html, body {
     height: auto;
     overflow-y: auto;
