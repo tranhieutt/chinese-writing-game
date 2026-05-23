@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Nunito_Sans, Noto_Serif_SC } from "next/font/google";
+import Script from "next/script";
 import { ProgressProvider } from "./providers/ProgressProvider";
+import { GA_TRACKING_ID } from "./utils/analytics";
 import "./globals.css";
 
 const nunitoSans = Nunito_Sans({
@@ -32,6 +34,24 @@ export default function RootLayout({
   return (
     <html lang="vi" className={`${nunitoSans.variable} ${notoSerifSC.variable}`}>
       <body>
+        {GA_TRACKING_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
         <ProgressProvider>
           {children}
         </ProgressProvider>
@@ -39,3 +59,4 @@ export default function RootLayout({
     </html>
   );
 }
+

@@ -10,6 +10,7 @@ import { GroupTabs } from '@/components/GroupTabs';
 import { CharacterSelector } from '@/components/CharacterSelector';
 import { MascotPanda } from '@/components/MascotPanda';
 import { useAudio } from '@/hooks/useAudio';
+import { trackEvent } from '@/app/utils/analytics';
 
 // Import các component động hoặc client-only để tránh lỗi render phía server (SSR)
 const Confetti = dynamic(() => import('react-confetti'), { ssr: false });
@@ -80,6 +81,7 @@ export default function GamePage() {
     const group = groups.find((g) => g.id === activeGroupId) || groups[0];
     setActiveGroup(group);
     setActiveCharName(group.chars[0].char);
+    trackEvent('group_selected', { group_id: activeGroupId, group_label: group.label });
   }, [activeGroupId, groups]);
 
   // Cập nhật chữ khi activeCharName đổi
@@ -92,7 +94,8 @@ export default function GamePage() {
     setGameMode('idle');
     setMascotState('idle');
     setMascotText(getRandomMascotText('welcome'));
-  }, [activeCharName, activeGroup]);
+    trackEvent('char_selected', { char_name: activeCharName, group_id: activeGroupId });
+  }, [activeCharName, activeGroup, activeGroupId]);
 
   // Mascot phrases
   const MASCOT_PHRASES = {
@@ -207,6 +210,7 @@ export default function GamePage() {
       setScoreAttempts(0);
       setGameMode('idle');
       handleMascotSpeech('welcome', 'Đã xóa thành tích. Bắt đầu học lại từ đầu nhé!');
+      trackEvent('stats_reset', { action_type: 'reset_all' });
     }
   };
 
@@ -216,14 +220,16 @@ export default function GamePage() {
     setScoreAttempts((prev) => prev + 1);
     addXp(10);
     handleMascotSpeech('correct');
+    trackEvent('quiz_stroke_success', { char_name: activeChar.char, stroke_index: strokeNum, total_strokes: _totalStrokes });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addXp]);
+  }, [addXp, activeChar]);
 
   const handleWrongStroke = useCallback(() => {
     setScoreAttempts((prev) => prev + 1);
     handleMascotSpeech('wrong');
+    trackEvent('quiz_stroke_error', { char_name: activeChar.char });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeChar]);
 
   const handleComplete = useCallback(() => {
     const isNew = markCharComplete(activeChar.char);
@@ -231,12 +237,13 @@ export default function GamePage() {
       addXp(100);
     }
     handleMascotSpeech('complete');
+    trackEvent('quiz_completed', { char_name: activeChar.char, total_attempts: scoreAttempts + 1, strokes: activeChar.strokes });
     // Tự động phát âm khi viết hoàn tất chữ Hán để ghi nhớ sâu sắc
     setTimeout(() => {
       pronounceChar();
     }, 500);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChar, markCharComplete, addXp]);
+  }, [activeChar, markCharComplete, addXp, scoreAttempts]);
 
   return (
     <div className="min-h-screen flex flex-col items-center">
@@ -312,6 +319,7 @@ export default function GamePage() {
                 onClick={() => {
                   setGameMode('preview');
                   handleMascotSpeech('preview');
+                  trackEvent('stroke_preview_started', { char_name: activeChar.char, group_id: activeGroupId });
                 }}
               >
                 🖌️ Xem nét
@@ -331,6 +339,7 @@ export default function GamePage() {
                 onClick={() => {
                   setGameMode('quiz');
                   handleMascotSpeech('quiz');
+                  trackEvent('quiz_started', { char_name: activeChar.char, group_id: activeGroupId });
                 }}
               >
                 ✏️ Luyện viết
@@ -402,6 +411,7 @@ export default function GamePage() {
                 setScoreCorrect(0);
                 setScoreAttempts(0);
                 handleMascotSpeech('welcome', 'Đã làm lại chữ này.');
+                trackEvent('stats_reset', { action_type: 'reset_character', char_name: activeChar.char });
               }}
               disabled={gameMode === 'preview' || gameMode === 'quiz'}
             >
