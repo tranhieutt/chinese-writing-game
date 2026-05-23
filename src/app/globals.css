@@ -1219,13 +1219,14 @@ body::after {
   }
 
   .main-card {
-    padding: 8px 10px 6px;
+    padding: 8px 10px 12px;
     border-radius: 16px;
-    gap: 4px;
+    gap: 12px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
+    justify-content: flex-start;
+    flex: 0 0 auto !important;
+    height: auto !important;
     min-height: 0;
   }
 
