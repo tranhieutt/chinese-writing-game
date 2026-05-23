@@ -953,31 +953,35 @@ function colorStrokeSVG(strokeIdx, color) {
   applyAllStrokeColors();
 }
 
-function applyAllStrokeColors() {
+function getMainStrokePaths() {
   const svg = document.querySelector('#hanzi-container svg');
-  if (!svg) return;
+  if (!svg) return null;
 
-  const topG = svg.querySelector(':scope > g');
-  if (!topG) return;
+  // Cấu trúc HanziWriter: svg > g(positioner) > g(outline) > g(main) > g(highlight)
+  // Mỗi g chứa các <path> là animationPath của từng stroke, theo thứ tự stroke index
+  // Layer "main" là layer thứ 2 trong positioner group (index 1)
+  const positionerG = svg.querySelector(':scope > g');
+  if (!positionerG) return null;
 
-  const layers = Array.from(topG.querySelectorAll(':scope > g'));
-  const charLayer = layers.reduce((best, g) =>
-    g.querySelectorAll(':scope > g').length > (best ? best.querySelectorAll(':scope > g').length : 0) ? g : best
-  , null);
+  const charLayers = Array.from(positionerG.querySelectorAll(':scope > g'));
+  // outline=0, main=1, highlight=2
+  const mainLayer = charLayers[1];
+  if (!mainLayer) return null;
 
-  if (!charLayer) return;
+  // Các path stroke nằm trực tiếp trong mainLayer (ko wrap thêm <g>)
+  return Array.from(mainLayer.querySelectorAll(':scope > path'));
+}
 
-  const strokeGs = charLayer.querySelectorAll(':scope > g');
+function applyAllStrokeColors() {
+  const paths = getMainStrokePaths();
+  if (!paths || paths.length === 0) return;
 
   Object.entries(strokeColorMap).forEach(([idx, color]) => {
-    const g = strokeGs[parseInt(idx)];
-    if (!g) return;
-    g.querySelectorAll('path').forEach(p => {
-      const f = p.getAttribute('fill');
-      if (f && f !== 'none' && f !== 'rgba(0,0,0,0)') {
-        p.setAttribute('fill', color);
-      }
-    });
+    const path = paths[parseInt(idx)];
+    if (!path) return;
+    // HanziWriter dùng stroke attribute (không phải fill) cho animation paths
+    path.setAttribute('stroke', color);
+    path.style.opacity = '1';
   });
 }
 
