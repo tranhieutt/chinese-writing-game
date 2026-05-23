@@ -18,33 +18,63 @@ Web game luyện viết chữ Hán theo thứ tự nét bút, thiết kế theo 
 
 ## Công nghệ
 
-- Vanilla HTML/CSS/JavaScript — không cần build tool
-- [HanziWriter](https://hanziwriter.org) (CDN) — stroke animation & quiz engine
+- **Next.js 16** + **React 19** + **TypeScript**
+- [HanziWriter](https://hanziwriter.org) — stroke animation & quiz engine
+- Tailwind CSS — utility-first styling
 - Deploy: Vercel
 
 ## Cấu trúc dữ liệu
 
-```js
-GROUPS = [
-  { id, label, icon, chars: [{ char, pinyin, meaning, strokes }] }
-]
+```ts
+interface Group {
+  id: string;
+  label: string;
+  icon: string;
+  chars: { char: string; pinyin: string; meaning: string; strokes: number }[];
+}
 ```
 
 ## Cấu trúc file
 
 ```
-chinese-writing-game.html   # HTML chính
-css/chinese-writing-game.css  # Toàn bộ styles
-js/vocab-groups.js          # Data chữ viết (GROUPS[])
-docs/vocabulary/hsk1-classic-150.md # Nguồn HSK1 classic 150 words
-js/app.js                   # Logic game
+src/
+  app/
+    page.tsx                  # Trang game chính
+    layout.tsx                # Root layout + fonts
+    globals.css               # Global styles & design tokens
+    providers/
+      ProgressProvider.tsx    # Context XP / streak / progress
+  components/
+    HanziCanvas.tsx           # Canvas vẽ nét (HanziWriter wrapper)
+    MascotPanda.tsx           # Mascot gấu trúc SVG
+    StatsPanel.tsx            # Header stats (XP, level, streak)
+    ScoreStrip.tsx            # Điểm nét đúng / lần thử
+    GroupTabs.tsx             # Tab chọn nhóm chủ đề
+    CharacterSelector.tsx     # Selector chữ Hán
+  hooks/
+    useLocalStorage.ts        # Persistent state hook
+    useAudio.ts               # Web Audio API SFX hook
+public/
+  data/vocabulary.json        # Data chữ Hán (GROUPS[])
 ```
 
 ## Chạy local
 
-Mở thẳng file `chinese-writing-game.html` trên trình duyệt — không cần server.
+```bash
+npm install
+npm run dev
+# Mở http://localhost:3000
+```
 
 ## Lịch sử thay đổi
+
+### v0.8 — Port sang Next.js + React + TypeScript (2026-05-23)
+- Migration từ Vanilla HTML/CSS/JS sang Next.js 16 + React 19 + TypeScript
+- Tách thành các component độc lập: HanziCanvas, MascotPanda, StatsPanel, ScoreStrip, GroupTabs, CharacterSelector
+- Thêm ProgressProvider (Context API) quản lý XP, level, streak, completedChars
+- Hooks tái sử dụng: useLocalStorage, useAudio
+- Cập nhật vercel.json: `framework: nextjs`
+- Thêm .gitignore entries cho Next.js build artifacts
 
 ### v0.7 — Fix scroll chuột trên desktop (2026-05-22)
 - Sửa lỗi không scroll được bằng chuột khi con trỏ nằm trên vùng canvas chữ Hán
