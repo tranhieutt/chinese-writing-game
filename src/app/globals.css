@@ -1194,6 +1194,14 @@ body::after {
     height: 100dvh;
     overflow: hidden;
   }
+  .min-h-screen {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
 
   .container {
     width: 100vw !important;
