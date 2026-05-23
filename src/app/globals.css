@@ -1219,6 +1219,9 @@ body::after {
   }
 
   .group-tabs, .char-selector {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0; /* Cho phép co giãn nhỏ hơn kích thước nội dung để kích hoạt scrollbar */
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     justify-content: flex-start !important;
