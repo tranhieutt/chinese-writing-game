@@ -43,11 +43,12 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
 
     const container = containerRef.current;
     if (container && container.parentElement) {
-      const parent = container.parentElement;
-      const w = parent.clientWidth || parent.offsetWidth;
-      const h = parent.clientHeight || parent.offsetHeight;
+      // getBoundingClientRect() trả về kích thước CSS thực tế sau khi render
+      const rect = container.parentElement.getBoundingClientRect();
+      const w = Math.round(rect.width);
+      const h = Math.round(rect.height);
       if (w > 0 && h > 0) {
-        return { width: w, height: h };
+        return { width: Math.max(120, w), height: Math.max(120, h) };
       }
     }
 
@@ -92,7 +93,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     return Array.from(mainLayer.querySelectorAll(':scope > path')) as SVGPathElement[];
   };
 
-  /** Áp dụng tất cả màu đã lưu lên SVG paths bằng inline style */
+  /** Áp dụng tất cả màu đã lưu lên SVG paths bằng setAttribute (giống bản gốc app.js) */
   const applyAllStrokeColors = () => {
     const paths = getMainStrokePaths();
     if (!paths || paths.length === 0) return;
@@ -100,32 +101,25 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     Object.entries(strokeColorMapRef.current).forEach(([idx, color]) => {
       const path = paths[parseInt(idx)];
       if (!path) return;
-      // Dùng inline style để override SVG attribute mà HanziWriter set bằng setAttributeNS.
-      // Inline style.stroke > attr stroke, nên HanziWriter không thể đè lại.
-      path.style.stroke = color;
+      // Dùng setAttribute giống bản gốc app.js — HanziWriter dùng SVG attribute
+      // cho stroke, nên ta override trực tiếp trên cùng level.
+      // MutationObserver sẽ reapply sau mỗi lần HanziWriter re-render.
+      path.setAttribute('stroke', color);
     });
   };
 
-  /** Tô màu cho 1 nét cụ thể và lưu vào map */
+  /** Tô màu cho 1 nét cụ thể và lưu vào map (giống bản gốc app.js) */
   const colorStrokeSVG = (strokeIdx: number, color: string) => {
     strokeColorMapRef.current[strokeIdx] = color;
-    // Apply ngay lập tức
-    applyAllStrokeColors();
-    // Và thêm 1 lần nữa trong frame tiếp theo (phòng trường hợp HanziWriter
-    // re-render async sau khi showStroke() → nextStroke())
+    // Apply ngay + observer sẽ reapply sau mỗi HanziWriter re-render (giống bản gốc)
     requestAnimationFrame(() => applyAllStrokeColors());
-    // Backup: apply lần 3 sau 50ms để chắc chắn bắt được mọi re-render
-    setTimeout(() => applyAllStrokeColors(), 50);
   };
 
-  /** Xóa toàn bộ inline style stroke đã override */
+  /** Xóa toàn bộ màu stroke đã override trên SVG attribute */
   const clearAllStrokeStyles = () => {
-    const paths = getMainStrokePaths();
-    if (paths) {
-      paths.forEach((path) => {
-        path.style.removeProperty('stroke');
-      });
-    }
+    // Không cần xóa attribute vì khi HanziWriter hideCharacter()/re-init
+    // nó sẽ tạo lại SVG paths mới hoàn toàn.
+    // Chỉ cần reset bản đồ màu là đủ.
   };
 
   /** Khởi tạo MutationObserver để reapply màu khi HanziWriter re-render */
@@ -146,7 +140,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['stroke', 'opacity', 'style', 'd', 'stroke-dashoffset'],
+      attributeFilter: ['stroke', 'opacity', 'style'],
     });
   };
 
