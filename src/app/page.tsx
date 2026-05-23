@@ -8,12 +8,15 @@ import { StatsPanel } from '@/components/StatsPanel';
 import { ScoreStrip } from '@/components/ScoreStrip';
 import { GroupTabs } from '@/components/GroupTabs';
 import { CharacterSelector } from '@/components/CharacterSelector';
-import { HanziCanvas } from '@/components/HanziCanvas';
 import { MascotPanda } from '@/components/MascotPanda';
 import { useAudio } from '@/hooks/useAudio';
 
-// Import react-confetti động để tránh lỗi render phía server (SSR)
+// Import các component động hoặc client-only để tránh lỗi render phía server (SSR)
 const Confetti = dynamic(() => import('react-confetti'), { ssr: false });
+const HanziCanvas = dynamic(
+  () => import('@/components/HanziCanvas').then((mod) => mod.HanziCanvas),
+  { ssr: false }
+);
 
 // Kiểu dữ liệu
 interface Character {
