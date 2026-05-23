@@ -173,7 +173,8 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       setAttempts(0);
       setErrors(0);
     }
-  }, [gameMode, totalStrokes]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameMode, totalStrokes, playSFX, onCorrectStroke, onWrongStroke, onComplete, onModeChange, strokeColors]);
 
   return (
     <div className="canvas-wrapper">

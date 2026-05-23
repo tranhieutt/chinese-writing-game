@@ -85,7 +85,7 @@ export const MascotPanda: React.FC<MascotPandaProps> = ({ state, message }) => {
       >
         <svg viewBox="0 0 100 100" className="panda-svg">
           {/* Body/Head */}
-          <circle cx="50" cy="55" r="33" fill="#ffffff" stroke="#21394f" stroke-width="3" />
+          <circle cx="50" cy="55" r="33" fill="#ffffff" stroke="#21394f" strokeWidth={3} />
           
           {/* Ears */}
           <circle cx="23" cy="29" r="11" fill="#21394f" />
@@ -125,10 +125,10 @@ export const MascotPanda: React.FC<MascotPandaProps> = ({ state, message }) => {
           {/* Mouth (Thay đổi hình dạng khuôn miệng dựa trên trạng thái vui/buồn) */}
           {state === 'wrong' ? (
             // Miệng buồn nhẹ
-            <path d="M47 64 Q50 61 53 64" fill="none" stroke="#21394f" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M47 64 Q50 61 53 64" fill="none" stroke="#21394f" strokeWidth={2.5} strokeLinecap="round" />
           ) : (
             // Miệng cười vui vẻ
-            <path d="M47 62 Q50 65 53 62" fill="none" stroke="#21394f" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M47 62 Q50 65 53 62" fill="none" stroke="#21394f" strokeWidth={2.5} strokeLinecap="round" />
           )}
 
           {/* Blush */}

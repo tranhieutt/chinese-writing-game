@@ -2,11 +2,18 @@
 
 import React from 'react';
 
+interface Character {
+  char: string;
+  pinyin: string;
+  meaning: string;
+  strokes: number;
+}
+
 interface Group {
   id: string;
   label: string;
   icon: string;
-  chars: Array<any>;
+  chars: Character[];
 }
 
 interface GroupTabsProps {

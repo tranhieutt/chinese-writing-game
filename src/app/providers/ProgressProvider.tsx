@@ -10,10 +10,9 @@ interface ProgressContextType {
   completedChars: string[];
   isMuted: boolean;
   addXp: (amount: number) => void;
-  markCharComplete: (char: string) => boolean; // Trả về true nếu là chữ mới hoàn thành lần đầu
+  markCharComplete: (char: string) => boolean;
   toggleMute: () => void;
   resetProgress: () => void;
-  updateStreak: () => void;
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(undefined);
@@ -31,62 +30,51 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setLevel(calculatedLevel);
   }, [xp]);
 
-  // Cập nhật và kiểm tra Streak khi app load
+  // Kiểm tra streak khi app load — reset nếu bỏ qua hơn 1 ngày
   useEffect(() => {
-    updateStreak();
-  }, []);
-
-  const updateStreak = () => {
+    if (typeof window === 'undefined') return;
     try {
       const todayStr = new Date().toISOString().split('T')[0];
       const lastDate = window.localStorage.getItem('hz_last_date');
-      
       if (lastDate) {
         const diffTime = Math.abs(new Date(todayStr).getTime() - new Date(lastDate).getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays > 1) {
-          setStreak(0); // Quá 1 ngày không học -> mất chuỗi
-        }
-      } else {
-        setStreak(0);
+        if (diffDays > 1) setStreak(0);
       }
     } catch (e) {
-      console.error('Error updating streak:', e);
+      console.error('Error checking streak:', e);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addXp = (amount: number) => {
     setXp((prev) => prev + amount);
   };
 
   const markCharComplete = (char: string): boolean => {
-    let isNew = false;
-    setCompletedChars((prev) => {
-      if (!prev.includes(char)) {
-        isNew = true;
-        const nextList = [...prev, char];
-        // Cập nhật streak & ngày học khi hoàn thành 1 chữ hán trong ngày
-        const todayStr = new Date().toISOString().split('T')[0];
-        const lastDate = window.localStorage.getItem('hz_last_date');
-        
-        if (lastDate !== todayStr) {
-          if (lastDate) {
-            const diffTime = Math.abs(new Date(todayStr).getTime() - new Date(lastDate).getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays === 1) {
-              setStreak((s) => s + 1);
-            } else {
-              setStreak(1);
-            }
-          } else {
-            setStreak(1);
-          }
+    const isNew = !completedChars.includes(char);
+    if (isNew) {
+      setCompletedChars((prev) => [...prev, char]);
+
+      // Cập nhật streak & ngày học khi hoàn thành 1 chữ hán mới trong ngày
+      const todayStr = new Date().toISOString().split('T')[0];
+      const lastDate = typeof window !== 'undefined'
+        ? window.localStorage.getItem('hz_last_date')
+        : null;
+
+      if (lastDate !== todayStr) {
+        if (lastDate) {
+          const diffTime = Math.abs(new Date(todayStr).getTime() - new Date(lastDate).getTime());
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          setStreak(diffDays === 1 ? (s) => s + 1 : 1);
+        } else {
+          setStreak(1);
+        }
+        if (typeof window !== 'undefined') {
           window.localStorage.setItem('hz_last_date', todayStr);
         }
-        return nextList;
       }
-      return prev;
-    });
+    }
     return isNew;
   };
 
@@ -117,7 +105,6 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         markCharComplete,
         toggleMute,
         resetProgress,
-        updateStreak,
       }}
     >
       {children}

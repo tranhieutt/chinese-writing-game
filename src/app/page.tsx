@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import vocabularyData from '@/data/vocabulary.json';
 import { useProgress } from './providers/ProgressProvider';
@@ -208,19 +208,21 @@ export default function GamePage() {
   };
 
   // Callback điều khiển các sự kiện vẽ nét của HanziCanvas
-  const handleCorrectStroke = (strokeNum: number, totalStrokes: number) => {
+  const handleCorrectStroke = useCallback((strokeNum: number, _totalStrokes: number) => {
     setScoreCorrect(strokeNum);
     setScoreAttempts((prev) => prev + 1);
     addXp(10);
     handleMascotSpeech('correct');
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addXp]);
 
-  const handleWrongStroke = () => {
+  const handleWrongStroke = useCallback(() => {
     setScoreAttempts((prev) => prev + 1);
     handleMascotSpeech('wrong');
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleComplete = () => {
+  const handleComplete = useCallback(() => {
     const isNew = markCharComplete(activeChar.char);
     if (isNew) {
       addXp(100);
@@ -230,7 +232,8 @@ export default function GamePage() {
     setTimeout(() => {
       pronounceChar();
     }, 500);
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChar, markCharComplete, addXp]);
 
   return (
     <div className="min-h-screen flex flex-col items-center">
@@ -504,7 +507,7 @@ export default function GamePage() {
             <div style={{ textAlign: 'center', padding: '10px 0' }}>
               <div style={{ marginBottom: '12px' }}>
                 <svg viewBox="0 0 100 100" style={{ width: '80px', height: '80px', transform: 'scale(1.1)' }}>
-                  <circle cx="50" cy="55" r="33" fill="#ffffff" stroke="#21394f" stroke-width="3" />
+                  <circle cx="50" cy="55" r="33" fill="#ffffff" stroke="#21394f" strokeWidth={3} />
                   <circle cx="23" cy="29" r="11" fill="#21394f" />
                   <circle cx="77" cy="29" r="11" fill="#21394f" />
                   <circle cx="23" cy="29" r="6" fill="#ead8bd" />
@@ -516,7 +519,7 @@ export default function GamePage() {
                   <circle cx="39" cy="48" r="1.2" fill="#21394f" />
                   <circle cx="61" cy="48" r="1.2" fill="#21394f" />
                   <ellipse cx="50" cy="58" rx="4.5" ry="3" fill="#21394f" />
-                  <path d="M44 61 Q50 67 56 61" fill="none" stroke="#21394f" stroke-width="2.5" stroke-linecap="round" />
+                  <path d="M44 61 Q50 67 56 61" fill="none" stroke="#21394f" strokeWidth={2.5} strokeLinecap="round" />
                   <circle cx="26" cy="57" r="3.5" fill="#f3d1cc" />
                   <circle cx="74" cy="57" r="3.5" fill="#f3d1cc" />
                 </svg>

@@ -68,6 +68,13 @@ npm run dev
 
 ## Lịch sử thay đổi
 
+### v0.9 — Bug fixes & type safety (2026-05-23)
+- Fix bug `markCharComplete` stale closure: `isNew` luôn trả `false` → XP +100 cho chữ mới không chạy
+- Fix SVG `stroke-width` → `strokeWidth` (JSX) trong MascotPanda và feedback modal
+- Fix `useEffect` missing deps trong HanziCanvas: wrap callbacks với `useCallback`
+- Fix `updateStreak` dangling function: inline logic vào useEffect, xóa khỏi context interface
+- Fix `Array<any>` → `Character[]` type trong GroupTabs
+
 ### v0.8 — Port sang Next.js + React + TypeScript (2026-05-23)
 - Migration từ Vanilla HTML/CSS/JS sang Next.js 16 + React 19 + TypeScript
 - Tách thành các component độc lập: HanziCanvas, MascotPanda, StatsPanel, ScoreStrip, GroupTabs, CharacterSelector
