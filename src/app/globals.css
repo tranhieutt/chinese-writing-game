@@ -1196,6 +1196,9 @@ body::after {
   }
 
   .container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
     padding: 4px 6px 6px;
     gap: 6px;
     flex: 1;
@@ -1219,8 +1222,7 @@ body::after {
   }
 
   .group-tabs, .char-selector {
-    width: 100%;
-    max-width: 100%;
+    align-self: stretch !important; /* Ép container co dãn theo chiều rộng parent, không bị phình to theo content */
     min-width: 0; /* Cho phép co giãn nhỏ hơn kích thước nội dung để kích hoạt scrollbar */
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
@@ -1334,9 +1336,11 @@ body::after {
     margin-top: 4px;
     padding: 6px 12px 4px;
     border-radius: 12px;
-    width: calc(100% - 24px);
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
     margin-left: 12px;
     margin-right: 12px;
+    box-sizing: border-box;
   }
 
   .header-main-row {
