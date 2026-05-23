@@ -433,6 +433,9 @@ body {
 #hanzi-container canvas {
   touch-action: none !important;
   -webkit-tap-highlight-color: transparent;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* ── Complete overlay ── */

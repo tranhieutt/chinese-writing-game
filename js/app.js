@@ -496,26 +496,25 @@ function resizeConfettiCanvas() {
 function getWriterSize() {
   const container = document.getElementById('hanzi-container');
   if (!container || !container.parentElement) return { width: 280, height: 280 };
-  
-  const parent = container.parentElement;
-  let w = parent.clientWidth || parent.offsetWidth;
-  let h = parent.clientHeight || parent.offsetHeight;
-  
-  // Nếu màn hình mobile rất nhỏ hoặc CSS chưa load xong hoàn toàn gây ra clientWidth = 0, 
-  // tính toán kích thước dựa theo viewport
+
+  // getBoundingClientRect() trả về kích thước CSS thực tế sau khi render
+  // (bao gồm min(), vw, vh), chính xác hơn clientWidth/offsetWidth
+  const rect = container.parentElement.getBoundingClientRect();
+  let w = Math.round(rect.width);
+  let h = Math.round(rect.height);
+
   if (w <= 0 || h <= 0) {
     const isMobile = window.innerWidth <= 480;
     if (isMobile) {
-      // Dựa theo CSS: width: min(200px, 48vw, 28vh)
       const size = Math.min(200, window.innerWidth * 0.48, window.innerHeight * 0.28);
-      w = size;
-      h = size;
+      w = Math.round(size);
+      h = Math.round(size);
     } else {
       w = 280;
       h = 280;
     }
   }
-  
+
   return { width: Math.max(120, w), height: Math.max(120, h) };
 }
 
@@ -526,8 +525,14 @@ function resizeHanziWriter() {
     if (writer && typeof HanziWriter !== 'undefined') {
       const size = getWriterSize();
       writer.updateDimensions({ width: size.width, height: size.height });
+      // Sync SVG attributes sau resize để tọa độ touch không bị lệch
+      const svg = document.querySelector('#hanzi-container svg');
+      if (svg) {
+        svg.setAttribute('width', size.width);
+        svg.setAttribute('height', size.height);
+      }
     }
-  }, 100);
+  }, 150);
 }
 
 window.addEventListener('resize', () => {
@@ -733,8 +738,19 @@ function initWriter(onReady) {
     }
   });
 
-  initStrokeObserver();
+  // Sau khi HanziWriter tạo SVG, ép width/height attribute khớp với
+  // kích thước CSS thực tế để tọa độ touch map chính xác trên mobile
+  setTimeout(() => {
+    const svg = document.querySelector('#hanzi-container svg');
+    if (svg) {
+      svg.setAttribute('width', size.width);
+      svg.setAttribute('height', size.height);
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+    }
+  }, 100);
 
+  initStrokeObserver();
 
   if (onReady) {
     setTimeout(onReady, 600);
