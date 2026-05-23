@@ -429,6 +429,11 @@ body {
   -webkit-user-select: none !important;
   -webkit-tap-highlight-color: transparent;
 }
+#hanzi-container svg,
+#hanzi-container canvas {
+  touch-action: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
 
 /* ── Complete overlay ── */
 .complete-overlay {

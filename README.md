@@ -68,6 +68,12 @@ npm run dev
 
 ## Lịch sử thay đổi
 
+### v1.0 — Fix nhận nét vẽ trên mobile (2026-05-23)
+- Tăng `leniency` HanziWriter từ 1.0 lên 1.8 cho thiết bị touch — nét vẽ đúng nhưng hơi lệch vẫn được ghi nhận
+- Tăng `drawingWidth` từ 6 lên 10 cho mobile — cải thiện độ nhận diện ngón tay
+- Thêm `highlightOnComplete: false` — giữ màu rainbow mỗi nét sau khi vẽ đúng, không bị reset
+- Thêm `touch-action: none` cho SVG và canvas con do HanziWriter tạo — ngăn scroll page khi vẽ
+
 ### v0.9 — Bug fixes & type safety (2026-05-23)
 - Fix bug `markCharComplete` stale closure: `isNew` luôn trả `false` → XP +100 cho chữ mới không chạy
 - Fix SVG `stroke-width` → `strokeWidth` (JSX) trong MascotPanda và feedback modal

@@ -694,6 +694,7 @@ function initWriter(onReady) {
 
   const size = getWriterSize();
 
+  const isMobileDevice = window.innerWidth <= 768 || ('ontouchstart' in window);
   writer = HanziWriter.create('hanzi-container', currentChar.char, {
     width: size.width,
     height: size.height,
@@ -702,10 +703,12 @@ function initWriter(onReady) {
     strokeColor: '#21394f',
     outlineColor: '#d9c8b6',
     drawingColor: STROKE_COLORS[0],
-    drawingWidth: 6,
+    drawingWidth: isMobileDevice ? 10 : 6,
     strokeAnimationSpeed: 1,
     delayBetweenStrokes: 200,
     showCharacter: false,
+    highlightOnComplete: false,
+    leniency: isMobileDevice ? 1.8 : 1.0,
     charDataLoader: (char, onComplete) => {
       const dataUrls = [
         `https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${char}.json`,
