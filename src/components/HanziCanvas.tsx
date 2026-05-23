@@ -60,28 +60,39 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
   };
 
   // ── Hệ thống tô màu nét SVG đã viết đúng ──
-  // HanziWriter render nét đúng bằng strokeColor (mặc định #21394f),
-  // nên ta phải trực tiếp sửa thuộc tính stroke trên SVG path
-  // để tô màu riêng từng nét đã hoàn thành.
+  //
+  // HanziWriter v3 render mỗi nét bằng <path> (animationPath) với clip-path.
+  // Khi viết đúng 1 nét, HanziWriter gọi showStroke() → render() → re-apply
+  // strokeColor lên <path> attribute. Nếu ta chỉ dùng setAttribute('stroke'),
+  // HanziWriter sẽ đè lại ngay lập tức.
+  //
+  // Giải pháp: dùng element.style.stroke (inline style) để override attribute,
+  // vì inline CSS style có priority cao hơn SVG attribute.
+  //
+  // Cấu trúc SVG của HanziWriter:
+  //   svg > defs(...) > g(positioner) > g[0](outline) g[1](main) g[2](highlight)
+  //   Mỗi g chứa trực tiếp <path> theo thứ tự stroke index
 
   /** Lấy danh sách <path> của layer chính (main) trong SVG */
-  const getMainStrokePaths = (): Element[] | null => {
+  const getMainStrokePaths = (): SVGPathElement[] | null => {
     if (!containerRef.current) return null;
     const svg = containerRef.current.querySelector('svg');
     if (!svg) return null;
 
-    // Cấu trúc HanziWriter SVG: svg > g(positioner) > g[0](outline) g[1](main) g[2](highlight)
+    // svg > g(positioner) - là <g> đầu tiên trực tiếp trong svg (không tính <defs>)
     const positionerG = svg.querySelector(':scope > g');
     if (!positionerG) return null;
 
+    // positionerG > g[0]=outline, g[1]=main, g[2]=highlight
     const charLayers = Array.from(positionerG.querySelectorAll(':scope > g'));
-    const mainLayer = charLayers[1];
+    const mainLayer = charLayers[1]; // layer chính (main character)
     if (!mainLayer) return null;
 
-    return Array.from(mainLayer.querySelectorAll(':scope > path'));
+    // Mỗi path trong mainLayer là _animationPath của StrokeRenderer, theo thứ tự stroke index
+    return Array.from(mainLayer.querySelectorAll(':scope > path')) as SVGPathElement[];
   };
 
-  /** Áp dụng tất cả màu đã lưu lên SVG paths */
+  /** Áp dụng tất cả màu đã lưu lên SVG paths bằng inline style */
   const applyAllStrokeColors = () => {
     const paths = getMainStrokePaths();
     if (!paths || paths.length === 0) return;
@@ -89,15 +100,32 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     Object.entries(strokeColorMapRef.current).forEach(([idx, color]) => {
       const path = paths[parseInt(idx)];
       if (!path) return;
-      path.setAttribute('stroke', color);
+      // Dùng inline style để override SVG attribute mà HanziWriter set bằng setAttributeNS.
+      // Inline style.stroke > attr stroke, nên HanziWriter không thể đè lại.
+      path.style.stroke = color;
     });
   };
 
   /** Tô màu cho 1 nét cụ thể và lưu vào map */
   const colorStrokeSVG = (strokeIdx: number, color: string) => {
     strokeColorMapRef.current[strokeIdx] = color;
-    // Apply ngay + observer sẽ reapply sau mỗi HanziWriter re-render
+    // Apply ngay lập tức
+    applyAllStrokeColors();
+    // Và thêm 1 lần nữa trong frame tiếp theo (phòng trường hợp HanziWriter
+    // re-render async sau khi showStroke() → nextStroke())
     requestAnimationFrame(() => applyAllStrokeColors());
+    // Backup: apply lần 3 sau 50ms để chắc chắn bắt được mọi re-render
+    setTimeout(() => applyAllStrokeColors(), 50);
+  };
+
+  /** Xóa toàn bộ inline style stroke đã override */
+  const clearAllStrokeStyles = () => {
+    const paths = getMainStrokePaths();
+    if (paths) {
+      paths.forEach((path) => {
+        path.style.removeProperty('stroke');
+      });
+    }
   };
 
   /** Khởi tạo MutationObserver để reapply màu khi HanziWriter re-render */
@@ -110,7 +138,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
 
     strokeObserverRef.current = new MutationObserver(() => {
       if (Object.keys(strokeColorMapRef.current).length === 0) return;
-      // requestAnimationFrame đảm bảo reapply SAU khi HanziWriter re-render xong
+      // requestAnimationFrame đảm bảo reapply SAU khi HanziWriter render xong
       requestAnimationFrame(() => applyAllStrokeColors());
     });
 
@@ -118,7 +146,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['stroke', 'opacity', 'style'],
+      attributeFilter: ['stroke', 'opacity', 'style', 'd', 'stroke-dashoffset'],
     });
   };
 
@@ -208,6 +236,9 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       writer.cancelQuiz();
       writer.showOutline();
       writer.hideCharacter();
+      // Xóa style override trước khi animate
+      strokeColorMapRef.current = {};
+      clearAllStrokeStyles();
       
       writer.animateCharacter({
         onComplete: () => {
@@ -219,8 +250,9 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       writer.showOutline();
       writer.hideCharacter();
 
-      // Reset bản đồ màu khi bắt đầu quiz mới
+      // Reset bản đồ màu và xóa style override khi bắt đầu quiz mới
       strokeColorMapRef.current = {};
+      clearAllStrokeStyles();
 
       // Đặt màu bút vẽ cho nét đầu tiên
       writer.updateColor('drawingColor', strokeColors[0]);
@@ -232,7 +264,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
           setCurrentStrokeIndex(strokeData.strokeNum + 1);
           setAttempts((prev) => prev + 1);
 
-          // Tô màu nét vừa viết đúng trên SVG
+          // Tô màu nét vừa viết đúng trên SVG bằng inline style
           const currentColor = strokeColors[strokeData.strokeNum % strokeColors.length];
           colorStrokeSVG(strokeData.strokeNum, currentColor);
 
@@ -259,8 +291,9 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       writer.cancelQuiz();
       writer.showOutline();
       writer.hideCharacter();
-      // Reset bản đồ màu và về nét đầu tiên
+      // Reset bản đồ màu, xóa style override, reset về nét đầu tiên
       strokeColorMapRef.current = {};
+      clearAllStrokeStyles();
       writer.updateColor('drawingColor', strokeColors[0]);
       setCurrentStrokeIndex(0);
       setAttempts(0);
