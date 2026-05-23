@@ -268,21 +268,24 @@ export default function GamePage() {
           completedCount={completedChars.length}
         />
 
-        {/* 3. Group Tabs */}
-        <GroupTabs
-          groups={groups}
-          activeGroupId={activeGroupId}
-          onSelectGroup={setActiveGroupId}
-          disabled={gameMode === 'preview' || gameMode === 'quiz'}
-        />
+        {/* 3 & 4. Navigation Group (Sticky on Mobile) */}
+        <div className="sticky-nav-wrapper">
+          {/* 3. Group Tabs */}
+          <GroupTabs
+            groups={groups}
+            activeGroupId={activeGroupId}
+            onSelectGroup={setActiveGroupId}
+            disabled={gameMode === 'preview' || gameMode === 'quiz'}
+          />
 
-        {/* 4. Character Selector */}
-        <CharacterSelector
-          chars={activeGroup.chars}
-          activeChar={activeCharName}
-          onSelectChar={setActiveCharName}
-          disabled={gameMode === 'preview' || gameMode === 'quiz'}
-        />
+          {/* 4. Character Selector */}
+          <CharacterSelector
+            chars={activeGroup.chars}
+            activeChar={activeCharName}
+            onSelectChar={setActiveCharName}
+            disabled={gameMode === 'preview' || gameMode === 'quiz'}
+          />
+        </div>
 
         {/* 5. Main Game Card */}
         <div className="main-card">

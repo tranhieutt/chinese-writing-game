@@ -177,8 +177,18 @@ body {
   font-weight: 900;
 }
 
+/* ── Navigation Group Wrapper ── */
+.sticky-nav-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
 /* ── Group tabs ── */
 .group-tabs {
+
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -1219,9 +1229,9 @@ body::after {
   }
 
   .main-card {
-    padding: 8px 10px 12px;
+    padding: 6px 10px 8px;
     border-radius: 16px;
-    gap: 12px;
+    gap: 6px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -1230,7 +1240,25 @@ body::after {
     min-height: 0;
   }
 
+  .sticky-nav-wrapper {
+    position: sticky !important;
+    top: -4px !important; /* matches the padding of container to align perfectly at the top */
+    z-index: 50 !important;
+    background: rgba(251, 241, 223, 0.96) !important; /* translucent --ds-rice */
+    backdrop-filter: blur(8px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    width: 100% !important;
+    padding: 6px 4px 6px !important;
+    box-shadow: 0 4px 12px rgba(33, 57, 79, 0.08);
+    border-radius: 12px;
+    margin-bottom: 10px !important;
+  }
+
   .group-tabs, .char-selector {
+
+    flex-shrink: 0 !important; /* Ngăn chặn trình duyệt tự động ép xẹp chiều cao */
     align-self: stretch !important; /* Ép container co dãn theo chiều rộng parent, không bị phình to theo content */
     min-width: 0; /* Cho phép co giãn nhỏ hơn kích thước nội dung để kích hoạt scrollbar */
     flex-wrap: nowrap !important;
@@ -1243,6 +1271,8 @@ body::after {
     scrollbar-color: rgba(33, 57, 79, 0.2) transparent;
     touch-action: pan-x !important; /* Cho phép drag/swipe ngang mượt mà trên mobile */
   }
+
+
 
   .group-tabs::-webkit-scrollbar, .char-selector::-webkit-scrollbar {
     height: 4px !important;
@@ -1278,28 +1308,37 @@ body::after {
 
   .char-info {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: 100% !important;
   }
   
   .char-display {
-    font-size: 38px;
+    font-size: 28px !important;
     text-shadow: 2px 2px 0 rgba(78, 136, 173, 0.14);
+    line-height: 1.1 !important;
   }
   
   .char-pinyin {
-    font-size: 13px;
-    margin-top: 1px;
+    font-size: 14px !important;
+    font-weight: 700;
+    color: rgba(33, 57, 79, 0.8) !important;
+    margin-top: 0 !important;
+    line-height: 1.1 !important;
   }
-  
+
+  .char-pronounce-row {
+    width: 100% !important;
+    margin-top: 2px !important;
+    gap: 6px !important;
+  }
+
   .char-meaning {
-    font-size: 10px;
-    max-width: 240px;
-    white-space: normal;
-    line-height: 1.25;
-    text-align: center;
-    margin-top: 1px;
+    font-size: 11px !important;
+    margin-top: 0 !important;
   }
 
   .stroke-count-badge {
@@ -1352,23 +1391,19 @@ body::after {
     box-sizing: border-box;
   }
 
+  .header-branding {
+    display: none !important;
+  }
+
   .header-main-row {
-    gap: 8px;
-  }
-
-  .header-sub {
-    display: none;
-  }
-
-  .header-title {
-    font-size: 15px;
-  }
-
-  .header-owl {
-    font-size: 20px;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 0 !important;
   }
 
   .header-stats {
+    width: 100% !important;
+    justify-content: space-between !important;
     gap: 4px;
     margin-top: 0;
   }
@@ -1395,8 +1430,8 @@ body::after {
   }
 
   .canvas-wrapper {
-    width: min(200px, 48vw, 28vh) !important;
-    height: min(200px, 48vw, 28vh) !important;
+    width: min(160px, 40vw, 22vh) !important;
+    height: min(160px, 40vw, 22vh) !important;
     border-radius: 12px;
   }
 
