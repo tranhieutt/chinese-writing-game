@@ -33,6 +33,10 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
   const [totalStrokes, setTotalStrokes] = useState<number>(0);
   const [currentStrokeIndex, setCurrentStrokeIndex] = useState<number>(0);
 
+  // Refs cho hệ thống tô màu nét SVG (giống bản gốc app.js)
+  const strokeColorMapRef = useRef<Record<number, string>>({});
+  const strokeObserverRef = useRef<MutationObserver | null>(null);
+
   // Lấy kích thước canvas phù hợp với thiết bị giống bản gốc
   const getWriterSize = (): { width: number; height: number } => {
     if (typeof window === 'undefined') return { width: 280, height: 280 };
@@ -55,6 +59,69 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     return { width: 280, height: 280 };
   };
 
+  // ── Hệ thống tô màu nét SVG đã viết đúng ──
+  // HanziWriter render nét đúng bằng strokeColor (mặc định #21394f),
+  // nên ta phải trực tiếp sửa thuộc tính stroke trên SVG path
+  // để tô màu riêng từng nét đã hoàn thành.
+
+  /** Lấy danh sách <path> của layer chính (main) trong SVG */
+  const getMainStrokePaths = (): Element[] | null => {
+    if (!containerRef.current) return null;
+    const svg = containerRef.current.querySelector('svg');
+    if (!svg) return null;
+
+    // Cấu trúc HanziWriter SVG: svg > g(positioner) > g[0](outline) g[1](main) g[2](highlight)
+    const positionerG = svg.querySelector(':scope > g');
+    if (!positionerG) return null;
+
+    const charLayers = Array.from(positionerG.querySelectorAll(':scope > g'));
+    const mainLayer = charLayers[1];
+    if (!mainLayer) return null;
+
+    return Array.from(mainLayer.querySelectorAll(':scope > path'));
+  };
+
+  /** Áp dụng tất cả màu đã lưu lên SVG paths */
+  const applyAllStrokeColors = () => {
+    const paths = getMainStrokePaths();
+    if (!paths || paths.length === 0) return;
+
+    Object.entries(strokeColorMapRef.current).forEach(([idx, color]) => {
+      const path = paths[parseInt(idx)];
+      if (!path) return;
+      path.setAttribute('stroke', color);
+    });
+  };
+
+  /** Tô màu cho 1 nét cụ thể và lưu vào map */
+  const colorStrokeSVG = (strokeIdx: number, color: string) => {
+    strokeColorMapRef.current[strokeIdx] = color;
+    // Apply ngay + observer sẽ reapply sau mỗi HanziWriter re-render
+    requestAnimationFrame(() => applyAllStrokeColors());
+  };
+
+  /** Khởi tạo MutationObserver để reapply màu khi HanziWriter re-render */
+  const initStrokeObserver = () => {
+    if (strokeObserverRef.current) {
+      strokeObserverRef.current.disconnect();
+    }
+    const container = containerRef.current;
+    if (!container) return;
+
+    strokeObserverRef.current = new MutationObserver(() => {
+      if (Object.keys(strokeColorMapRef.current).length === 0) return;
+      // requestAnimationFrame đảm bảo reapply SAU khi HanziWriter re-render xong
+      requestAnimationFrame(() => applyAllStrokeColors());
+    });
+
+    strokeObserverRef.current.observe(container, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['stroke', 'opacity', 'style'],
+    });
+  };
+
   // Khởi tạo HanziWriter
   useEffect(() => {
     if (!containerRef.current || !character) return;
@@ -62,10 +129,14 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     containerRef.current.innerHTML = '';
     const size = getWriterSize();
 
-    // Reset các biến đếm
+    // Reset các biến đếm và bản đồ màu
     setAttempts(0);
     setErrors(0);
     setCurrentStrokeIndex(0);
+    strokeColorMapRef.current = {};
+    if (strokeObserverRef.current) {
+      strokeObserverRef.current.disconnect();
+    }
 
     const writer = HanziWriter.create(containerRef.current, character, {
       width: size.width,
@@ -79,6 +150,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       strokeAnimationSpeed: 1.2,
       delayBetweenStrokes: 200,
       showCharacter: false,
+      highlightOnComplete: false,
       charDataLoader: (char, onCompleteLoader) => {
         // Load data từ CDN tin cậy
         fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/${char}.json`)
@@ -102,10 +174,17 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       setTotalStrokes(data.strokes.length);
     });
 
+    // Khởi tạo observer cho stroke coloring
+    initStrokeObserver();
+
     // Cleanup khi component unmount
     return () => {
+      if (strokeObserverRef.current) {
+        strokeObserverRef.current.disconnect();
+      }
       writerRef.current = null;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character]);
 
   // Cập nhật kích thước canvas khi màn hình thay đổi
@@ -140,12 +219,22 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       writer.showOutline();
       writer.hideCharacter();
 
+      // Reset bản đồ màu khi bắt đầu quiz mới
+      strokeColorMapRef.current = {};
+
+      // Đặt màu bút vẽ cho nét đầu tiên
+      writer.updateColor('drawingColor', strokeColors[0]);
+
       writer.quiz({
         onCorrectStroke: (strokeData) => {
           playSFX('correct');
           onCorrectStroke(strokeData.strokeNum + 1, totalStrokes);
           setCurrentStrokeIndex(strokeData.strokeNum + 1);
           setAttempts((prev) => prev + 1);
+
+          // Tô màu nét vừa viết đúng trên SVG
+          const currentColor = strokeColors[strokeData.strokeNum % strokeColors.length];
+          colorStrokeSVG(strokeData.strokeNum, currentColor);
 
           // Đổi màu vẽ cho nét tiếp theo
           const nextColor = strokeColors[(strokeData.strokeNum + 1) % strokeColors.length];
@@ -158,6 +247,9 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
           setAttempts((prev) => prev + 1);
         },
         onComplete: () => {
+          if (strokeObserverRef.current) {
+            strokeObserverRef.current.disconnect();
+          }
           playSFX('complete');
           onComplete();
           onModeChange('done');
@@ -167,7 +259,8 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       writer.cancelQuiz();
       writer.showOutline();
       writer.hideCharacter();
-      // Reset về nét đầu tiên
+      // Reset bản đồ màu và về nét đầu tiên
+      strokeColorMapRef.current = {};
       writer.updateColor('drawingColor', strokeColors[0]);
       setCurrentStrokeIndex(0);
       setAttempts(0);
