@@ -37,6 +37,25 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
   const strokeColorMapRef = useRef<Record<number, string>>({});
   const strokeObserverRef = useRef<MutationObserver | null>(null);
 
+  // Refs để lưu trữ các callback nhằm tránh việc useEffect phụ thuộc vào chúng
+  // và bị restart liên tục mỗi khi state của parent thay đổi (lỗi reset game).
+  const onCorrectStrokeRef = useRef(onCorrectStroke);
+  const onWrongStrokeRef = useRef(onWrongStroke);
+  const onCompleteRef = useRef(onComplete);
+  const playSFXRef = useRef(playSFX);
+  const onModeChangeRef = useRef(onModeChange);
+  const totalStrokesRef = useRef(totalStrokes);
+
+  // Đồng bộ refs ở mỗi lần render
+  useEffect(() => {
+    onCorrectStrokeRef.current = onCorrectStroke;
+    onWrongStrokeRef.current = onWrongStroke;
+    onCompleteRef.current = onComplete;
+    playSFXRef.current = playSFX;
+    onModeChangeRef.current = onModeChange;
+    totalStrokesRef.current = totalStrokes;
+  });
+
   // Lấy kích thước canvas phù hợp với thiết bị giống bản gốc
   const getWriterSize = (): { width: number; height: number } => {
     if (typeof window === 'undefined') return { width: 280, height: 280 };
@@ -236,7 +255,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       
       writer.animateCharacter({
         onComplete: () => {
-          onModeChange('idle');
+          onModeChangeRef.current('idle');
         },
       });
     } else if (gameMode === 'quiz') {
@@ -253,8 +272,8 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
 
       writer.quiz({
         onCorrectStroke: (strokeData) => {
-          playSFX('correct');
-          onCorrectStroke(strokeData.strokeNum + 1, totalStrokes);
+          playSFXRef.current('correct');
+          onCorrectStrokeRef.current(strokeData.strokeNum + 1, totalStrokesRef.current);
           setCurrentStrokeIndex(strokeData.strokeNum + 1);
           setAttempts((prev) => prev + 1);
 
@@ -267,8 +286,8 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
           writer.updateColor('drawingColor', nextColor);
         },
         onMistake: () => {
-          playSFX('wrong');
-          onWrongStroke();
+          playSFXRef.current('wrong');
+          onWrongStrokeRef.current();
           setErrors((prev) => prev + 1);
           setAttempts((prev) => prev + 1);
         },
@@ -276,9 +295,9 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
           if (strokeObserverRef.current) {
             strokeObserverRef.current.disconnect();
           }
-          playSFX('complete');
-          onComplete();
-          onModeChange('done');
+          playSFXRef.current('complete');
+          onCompleteRef.current();
+          onModeChangeRef.current('done');
         },
       });
     } else if (gameMode === 'idle') {
@@ -294,7 +313,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
       setErrors(0);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameMode, totalStrokes, playSFX, onCorrectStroke, onWrongStroke, onComplete, onModeChange, strokeColors]);
+  }, [gameMode, strokeColors]);
 
   return (
     <div className="canvas-wrapper">
