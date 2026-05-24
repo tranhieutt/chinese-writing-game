@@ -19,6 +19,8 @@ const defaultProps = {
   isMuted: false,
   onToggleMute: jest.fn(),
   onOpenHelp: jest.fn(),
+  currentHsk: 'hsk1',
+  onHskChange: jest.fn(),
 };
 
 describe('StatsPanel', () => {
@@ -75,5 +77,20 @@ describe('StatsPanel', () => {
     render(<StatsPanel {...defaultProps} />);
     expect(screen.getByText(/Luyện Viết/i)).toBeInTheDocument();
     expect(screen.getByText('Chữ Hán')).toBeInTheDocument();
+  });
+
+  it('hiển thị đúng dropdown chọn HSK với giá trị hiện tại', () => {
+    render(<StatsPanel {...defaultProps} currentHsk="hsk2" />);
+    const select = screen.getByTitle('Chọn cấp độ HSK') as HTMLSelectElement;
+    expect(select).toBeInTheDocument();
+    expect(select.value).toBe('hsk2');
+  });
+
+  it('gọi onHskChange khi thay đổi lựa chọn HSK', () => {
+    const onHskChange = jest.fn();
+    render(<StatsPanel {...defaultProps} onHskChange={onHskChange} />);
+    const select = screen.getByTitle('Chọn cấp độ HSK');
+    fireEvent.change(select, { target: { value: 'hsk3' } });
+    expect(onHskChange).toHaveBeenCalledWith('hsk3');
   });
 });

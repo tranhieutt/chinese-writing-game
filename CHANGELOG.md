@@ -4,6 +4,23 @@ Tất cả các thay đổi và tiến độ phát triển của dự án Luyệ
 
 ---
 
+## [1.6.0] - 2026-05-24
+
+### Thêm mới (Added)
+- **Chọn cấp độ HSK**: Dropdown trong `StatsPanel` cho phép chuyển đổi giữa HSK 1 / HSK 2 / HSK 3 ngay trong game, lưu lựa chọn vào `localStorage`.
+- **Data HSK đa cấp**: Thêm `src/data/hskVocabulary.ts` xuất object `hskVocabulary` phân theo key `hsk1`, `hsk2`, `hsk3` và mảng `strokeColors` tương ứng.
+- **E2E test HSK**: Thêm `tests/e2e/hsk.spec.ts` kiểm tra luồng chọn HSK level và xác nhận nhóm từ vựng được tải lại đúng.
+
+### Thay đổi (Changed)
+- `page.tsx`: Chuyển từ import tĩnh `vocabulary.json` sang `hskVocabulary` động; thêm `useLocalStorage` cho `hskLevel`; thêm `useEffect` đồng bộ `activeGroupId` khi đổi cấp độ.
+- `StatsPanel.tsx`: Thêm props `currentHsk` và `onHskChange`; render `<select class="hsk-select-btn">` với 3 option HSK.
+- `globals.css`: Thêm style `.hsk-select-btn` với thiết kế ink-wash nhất quán design system (box-shadow 3D, hover/active/focus states).
+
+### Kiểm thử (Tests)
+- `StatsPanel.test.tsx`: Thêm 2 test — kiểm tra dropdown hiển thị đúng giá trị và gọi `onHskChange` khi thay đổi.
+
+---
+
 ## [1.5.1] - 2026-05-24
 
 ### Sửa lỗi (Fixed)

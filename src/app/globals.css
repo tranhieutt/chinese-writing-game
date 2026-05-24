@@ -1925,3 +1925,43 @@ body::after {
 .footer-feedback-btn:hover {
   color: var(--ds-blueprint);
 }
+
+/* ── HSK Level Selector ── */
+.hsk-select-btn {
+  background: var(--ds-rice);
+  border: 2px solid var(--ds-ink);
+  border-radius: var(--ds-radius);
+  height: 34px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  color: var(--ds-ink);
+  padding: 0 24px 0 12px;
+  transition: all 0.15s;
+  box-shadow: 2px 3px 0 var(--ds-ink);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2321394f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.hsk-select-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 2px 4px 0 var(--ds-ink);
+}
+
+.hsk-select-btn:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--ds-ink);
+}
+
+.hsk-select-btn:focus {
+  border-color: var(--ds-blueprint);
+}
+

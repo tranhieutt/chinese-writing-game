@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import vocabularyData from '@/data/vocabulary.json';
+import { hskVocabulary, strokeColors } from '@/data/hskVocabulary';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useProgress } from './providers/ProgressProvider';
 import { StatsPanel } from '@/components/StatsPanel';
 import { ScoreStrip } from '@/components/ScoreStrip';
@@ -50,15 +51,26 @@ export default function GamePage() {
   // Khởi tạo audio sfx
   const { playSFX } = useAudio(isMuted);
 
-  // Load danh sách nhóm từ vựng và màu vẽ nét
-  const groups: Group[] = vocabularyData.groups;
-  const strokeColors: string[] = vocabularyData.strokeColors;
+  // Chọn cấp độ HSK
+  const [hskLevel, setHskLevel] = useLocalStorage<string>('hz_selected_hsk', 'hsk1');
+
+  // Load danh sách nhóm từ vựng và màu vẽ nét tương ứng với HSK đã chọn
+  const groups: Group[] = hskVocabulary[hskLevel]?.groups || hskVocabulary.hsk1.groups;
 
   // States quản lý chữ đang chọn
   const [activeGroupId, setActiveGroupId] = useState<string>(groups[0].id);
   const [activeGroup, setActiveGroup] = useState<Group>(groups[0]);
   const [activeCharName, setActiveCharName] = useState<string>(groups[0].chars[0].char);
   const [activeChar, setActiveChar] = useState<Character>(groups[0].chars[0]);
+
+  // Đồng bộ activeGroupId khi HSK level thay đổi
+  useEffect(() => {
+    const targetGroups = hskVocabulary[hskLevel]?.groups || hskVocabulary.hsk1.groups;
+    if (targetGroups && targetGroups.length > 0) {
+      setActiveGroupId(targetGroups[0].id);
+      trackEvent('hsk_level_changed', { hsk_level: hskLevel });
+    }
+  }, [hskLevel]);
 
   // States quản lý điểm số vẽ nét hiện tại của chữ
   const [scoreCorrect, setScoreCorrect] = useState<number>(0);
@@ -265,6 +277,8 @@ export default function GamePage() {
         isMuted={isMuted}
         onToggleMute={toggleMute}
         onOpenHelp={() => setShowHelp(true)}
+        currentHsk={hskLevel}
+        onHskChange={setHskLevel}
       />
 
       <div className="container">

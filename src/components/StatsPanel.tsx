@@ -10,6 +10,8 @@ interface StatsPanelProps {
   isMuted: boolean;
   onToggleMute: () => void;
   onOpenHelp: () => void;
+  currentHsk: string;
+  onHskChange: (hsk: string) => void;
 }
 
 export const StatsPanel: React.FC<StatsPanelProps> = ({
@@ -19,6 +21,8 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
   isMuted,
   onToggleMute,
   onOpenHelp,
+  currentHsk,
+  onHskChange,
 }) => {
   const currentLevelXP = xp % 500;
   const progressPercent = (currentLevelXP / 500) * 100;
@@ -65,6 +69,17 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
             {isMuted ? <VolumeX className="w-4 h-4 inline" /> : <Volume2 className="w-4 h-4 inline" />}
           </button>
           
+          <select 
+            value={currentHsk} 
+            onChange={(e) => onHskChange(e.target.value)}
+            className="hsk-select-btn"
+            title="Chọn cấp độ HSK"
+          >
+            <option value="hsk1">📚 HSK 1</option>
+            <option value="hsk2">📚 HSK 2</option>
+            <option value="hsk3">📚 HSK 3</option>
+          </select>
+
           <button 
             type="button"
             id="btn-help" 
