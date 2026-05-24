@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Nunito_Sans, Noto_Serif_SC } from "next/font/google";
 import Script from "next/script";
 import { ProgressProvider } from "./providers/ProgressProvider";
-import { GA_TRACKING_ID } from "./utils/analytics";
 import "./globals.css";
+
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || '';
 
 const nunitoSans = Nunito_Sans({
   variable: "--font-nunito-sans",

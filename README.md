@@ -68,6 +68,10 @@ npm run dev
 
 ## Lịch sử thay đổi
 
+### v1.1 — Cải thiện analytics & dropdown HSK level (2026-05-24)
+- Inline `GA_TRACKING_ID` từ env var `NEXT_PUBLIC_GA_ID` trong layout.tsx — bỏ dependency vào analytics utils
+- Thêm dropdown chọn cấp độ HSK (HSK 1/2/3) với localStorage persistence
+
 ### v1.0 — Fix nhận nét vẽ trên mobile (2026-05-23)
 - Tăng `leniency` HanziWriter từ 1.0 lên 1.8 cho thiết bị touch — nét vẽ đúng nhưng hơi lệch vẫn được ghi nhận
 - Tăng `drawingWidth` từ 6 lên 10 cho mobile — cải thiện độ nhận diện ngón tay
