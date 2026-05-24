@@ -4,6 +4,18 @@ Tất cả các thay đổi và tiến độ phát triển của dự án Luyệ
 
 ---
 
+## [1.5.1] - 2026-05-24
+
+### Sửa lỗi (Fixed)
+- **CSS mobile layout**: Tăng kích thước canvas từ `min(160px, 40vw, 22vh)` lên `min(176px, 44vw, 24.2vh)` và `min(290px, 36vh)` lên `min(319px, 39.6vh)` — canvas rộng hơn trên điện thoại nhỏ.
+- **Button điều hướng mobile**: Thêm `min-width`, `max-width`, `min-height`, `max-height`, `aspect-ratio: 1/1` cho `.btn-floating-nav` và `.btn-circle-*` để button luôn tròn và không bị bóp méo.
+- **Complete overlay mobile**: Thêm style riêng cho `.complete-overlay`, `.complete-star`, `.complete-text`, `.complete-sub`, `.btn-complete-next` ở breakpoint mobile — overlay hoàn thành hiển thị gọn gàng, không bị tràn.
+
+### Kiểm thử (Tests)
+- **E2E mobile canvas test**: Thêm test `Mobile writing canvas and completion button have enough room` kiểm tra canvas đủ kích thước, button điều hướng tròn đều và overlay hoàn thành không tràn màn hình.
+
+---
+
 ## [1.5.0] - 2026-05-21
 
 ### Thêm mới (Added)

@@ -112,3 +112,60 @@ test('Mobile scroll check', async ({ page }) => {
   await page.screenshot({ path: path.join(artifactDir, 'mobile_vertical_scrolled.png') });
   console.log('Saved vertical scrolled mobile screenshot.');
 });
+
+test('Mobile writing canvas and completion button have enough room', async ({ page }) => {
+  await page.goto('/');
+
+  await page.waitForSelector('.canvas-area-container');
+  await page.waitForSelector('.canvas-wrapper');
+
+  const canvasWrapper = page.locator('.canvas-wrapper');
+  const prevButton = page.locator('.canvas-area-container .btn-floating-nav').first();
+  const nextButton = page.locator('.canvas-area-container .btn-floating-nav').last();
+
+  await expect(canvasWrapper).toBeVisible();
+  await expect(prevButton).toBeVisible();
+  await expect(nextButton).toBeVisible();
+
+  await page.locator('.complete-overlay').evaluate((el) => {
+    el.classList.add('show');
+  });
+
+  const layout = await page.evaluate(() => {
+    const area = document.querySelector('.canvas-area-container') as HTMLElement;
+    const wrapper = document.querySelector('.canvas-wrapper') as HTMLElement;
+    const overlayButton = document.querySelector('.btn-complete-next') as HTMLElement;
+    const sideButtons = Array.from(document.querySelectorAll('.canvas-area-container .btn-floating-nav')) as HTMLElement[];
+
+    const areaRect = area.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const buttonRect = overlayButton.getBoundingClientRect();
+    const sideRects = sideButtons.map((button) => button.getBoundingClientRect());
+
+    return {
+      areaClientWidth: area.clientWidth,
+      areaScrollWidth: area.scrollWidth,
+      wrapperWidth: wrapperRect.width,
+      wrapperHeight: wrapperRect.height,
+      nextButtonBottomGap: wrapperRect.bottom - buttonRect.bottom,
+      sideButtonSizes: sideRects.map((rect) => ({
+        width: rect.width,
+        height: rect.height,
+      })),
+      leftButtonInside: sideRects[0].left >= areaRect.left,
+      rightButtonInside: sideRects[1].right <= areaRect.right,
+    };
+  });
+
+  expect(layout.wrapperWidth).toBeGreaterThanOrEqual(172);
+  expect(layout.wrapperHeight).toBeGreaterThanOrEqual(172);
+  expect(layout.nextButtonBottomGap).toBeGreaterThanOrEqual(8);
+  for (const size of layout.sideButtonSizes) {
+    expect(Math.abs(size.width - size.height)).toBeLessThanOrEqual(1);
+  }
+  expect(layout.areaScrollWidth).toBeLessThanOrEqual(layout.areaClientWidth + 1);
+  expect(layout.leftButtonInside).toBe(true);
+  expect(layout.rightButtonInside).toBe(true);
+
+  await page.screenshot({ path: path.join('test-results', 'mobile-complete-overlay.png'), fullPage: true });
+});
