@@ -91,10 +91,10 @@ const SAMPLE_CHARS = [
 const FEATURES = [
   { color: 'red',  icon: '🖌️', title: 'Luyện nét bút thật', desc: 'Vẽ từng nét theo đúng thứ tự trên canvas. Hệ thống nhận diện thông minh chấp nhận nét hơi lệch — vừa học, vừa vui.' },
   { color: 'gold', icon: '✨', title: 'Gamification đầy đủ', desc: 'XP, cấp độ, streak ngày học, confetti mỗi khi hoàn thành chữ. Cảm giác tiến bộ mỗi ngày.' },
-  { color: 'jade', icon: '🎬', title: 'Xem animation nét', desc: 'Mỗi chữ có animation thứ tự nét bút đẹp mắt. Xem trước khi tập — không bao giờ bị nhầm thứ tự.' },
+  { color: 'jade', icon: '🎯', title: 'Luyện ngẫu nhiên tính giờ', desc: 'Chế độ đấu tính giờ độc đáo. Chọn ngẫu nhiên nhóm 3, 5, 7 từ HSK, theo dõi tiến độ bằng chuỗi hạt ngọc bích và nhận XP cực lớn.' },
   { color: 'ink',  icon: '🐼', title: 'Mascot gấu trúc', desc: 'Gấu trúc anime dễ thương theo dõi hành trình học của bạn — động viên khi đúng, an ủi khi sai.' },
   { color: 'red',  icon: '🎵', title: 'Âm thanh phản hồi', desc: 'SFX sinh động bằng Web Audio API — không cần tải file. Nghe rõ khi nét đúng, sai, hay hoàn thành chữ.' },
-  { color: 'gold', icon: '📚', title: '189 chữ Hán HSK1', desc: '10 nhóm chủ đề: Số đếm, Con người, Thời gian, Ăn uống... Bao phủ toàn bộ 178 chữ unique HSK1 classic.' },
+  { color: 'gold', icon: '📚', title: '400+ từ HSK 1, 2, 3', desc: '22 nhóm chủ đề phong phú: Bộ phận cơ thể, Màu sắc, Thiên nhiên, Bốn mùa... Bao phủ kho từ vựng HSK đa dạng.' },
 ];
 
 const STEPS = [
@@ -152,12 +152,12 @@ export default function LandingPage() {
         </p>
 
         <div className="lp-cta-group">
-          <a className="lp-btn-primary" href="https://gametiengtrung-cyan.vercel.app/" target="_blank" rel="noopener noreferrer">
-            🖌️ Học ngay — Miễn phí
-          </a>
-          <a className="lp-btn-secondary" href="#features">
-            ✨ Xem tính năng
-          </a>
+          <Link className="lp-btn-primary" href="/">
+            🖌️ Học theo từ — Miễn phí
+          </Link>
+          <Link className="lp-btn-secondary" href="/practice" style={{ background: '#d6a85a', color: '#21394f' }}>
+            🎯 Luyện ngẫu nhiên tính giờ
+          </Link>
         </div>
 
         <div className="lp-scroll-hint">
@@ -176,10 +176,10 @@ export default function LandingPage() {
       {/* ════ STATS ════ */}
       <div className="lp-stats">
         {[
-          { num: '189', label: 'Chữ Hán HSK1' },
-          { num: '10',  label: 'Nhóm chủ đề' },
+          { num: '400+', label: 'Chữ Hán HSK 1-3' },
+          { num: '22',  label: 'Nhóm chủ đề' },
           { num: '100%', label: 'Miễn phí' },
-          { num: '∞',   label: 'Luyện tập' },
+          { num: '⏱️',   label: 'Luyện tính giờ' },
         ].map((s) => (
           <div className="lp-stat" key={s.label}>
             <div className="lp-stat-num">{s.num}</div>
@@ -217,7 +217,7 @@ export default function LandingPage() {
       {/* ════ CHARS SHOWCASE ════ */}
       <section className="lp-chars">
         <h2 className="lp-section-title lp-fade-up">Bắt đầu với những chữ này 字</h2>
-        <p className="lp-section-sub lp-fade-up" style={{marginBottom:36}}>189 chữ Hán HSK1 — pinyin + nghĩa tiếng Việt đầy đủ</p>
+        <p className="lp-section-sub lp-fade-up" style={{marginBottom:36}}>Học từ vựng HSK 1, 2, 3 — pinyin + nghĩa tiếng Việt đầy đủ</p>
         <div className="lp-chars-grid">
           {SAMPLE_CHARS.map((c) => (
             <div className="lp-char-chip lp-fade-up" key={c.char}>
@@ -227,9 +227,9 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
-        <a className="lp-btn-primary" href="https://gametiengtrung-cyan.vercel.app/" target="_blank" rel="noopener noreferrer">
-          🎮 Học tất cả 189 chữ →
-        </a>
+        <Link className="lp-btn-primary" href="/">
+          🎮 Học tất cả 400+ chữ →
+        </Link>
       </section>
 
       {/* ════ HOW IT WORKS ════ */}
@@ -281,13 +281,14 @@ export default function LandingPage() {
 
       {/* ════ CTA BOTTOM ════ */}
       <section className="lp-cta-bottom">
-        <h2 className="lp-cta-bottom-title">
-          Bắt đầu học<br/><span>ngay hôm nay</span> 今日
-        </h2>
-        <p className="lp-cta-bottom-sub">Miễn phí hoàn toàn · Không cần đăng ký · Chạy mọi thiết bị</p>
-        <a className="lp-btn-primary" href="https://gametiengtrung-cyan.vercel.app/" target="_blank" rel="noopener noreferrer">
-          🐼 Chơi ngay — Miễn phí
-        </a>
+        <div className="lp-cta-group" style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <Link className="lp-btn-primary" href="/">
+            🐼 Chơi ngay — Học theo từ
+          </Link>
+          <Link className="lp-btn-primary" href="/practice" style={{ background: '#d6a85a', color: '#21394f' }}>
+            🎯 Thử thách Luyện tính giờ
+          </Link>
+        </div>
       </section>
 
       {/* ════ FOOTER ════ */}
@@ -295,9 +296,9 @@ export default function LandingPage() {
         <div className="lp-footer-hanzi">練字 · 學中文</div>
         <p className="lp-footer-text">
           Made with ❤️ ·{' '}
-          <a className="lp-footer-link" href="https://gametiengtrung-cyan.vercel.app/" target="_blank" rel="noopener noreferrer">
-            gametiengtrung-cyan.vercel.app
-          </a>
+          <Link className="lp-footer-link" href="/">
+            Về trang chủ game
+          </Link>
         </p>
       </footer>
 

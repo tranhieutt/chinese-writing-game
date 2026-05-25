@@ -7,14 +7,18 @@ Web game luyện viết chữ Hán theo thứ tự nét bút, thiết kế theo 
 ## Tính năng
 
 - **10 nhóm chủ đề HSK1** — Số đếm, Đại từ, Con người, Thời gian, Địa điểm, Ăn uống, Đồ vật, Động từ, Tính chất, Thiên nhiên
-- **189 chữ Hán active** — bao phủ đủ 178 chữ unique trích từ HSK1 classic 150 words, kèm pinyin và nghĩa tiếng Việt
+- **400+ chữ Hán HSK 1, 2, 3** — 22 nhóm chủ đề phong phú mở rộng, bao phủ kho từ vựng HSK đa dạng kèm pinyin và nghĩa tiếng Việt
 - **Luyện viết** — vẽ nét theo đúng thứ tự trên canvas, nhận phản hồi tức thì
 - **Xem nét** — animation thứ tự nét bút từng chữ
 - **Tô màu nét** — mỗi nét một màu riêng sau khi vẽ đúng
+- **🎯 Luyện ngẫu nhiên tính giờ** — Chế độ đấu tính giờ (3/5/7 từ ngẫu nhiên Fisher-Yates), đếm giờ khung gỗ, hạt ngọc bích tiến độ emerald/gold, mascost panda và thưởng XP tốc độ
 - **Gamification** — XP, cấp độ, streak ngày học, confetti khi hoàn thành
 - **Mascot gấu trúc** — phản hồi động lực theo từng tình huống
 - **Âm thanh** — SFX bằng Web Audio API (không cần file âm thanh ngoài)
 - **Theo dõi tiến độ** — điểm số, thanh tiến độ, chữ đã hoàn thành
+- **🍪 Cookie Consent Banner** — Biểu ngữ cookie cổ phong tích hợp Google Analytics Consent Mode bảo mật quyền riêng tư
+- **🚀 Tối ưu hóa SEO** — Open Graph images, Robots.txt, Sitemap.xml tự động và canonical URL chuẩn chỉ
+- **📱 SPA Landing Page** — Trang landing page SPA mượt mà sử dụng Next.js Link điều hướng siêu tốc
 
 ## Công nghệ
 
@@ -42,6 +46,14 @@ src/
     page.tsx                  # Trang game chính
     layout.tsx                # Root layout + fonts
     globals.css               # Global styles & design tokens
+    robots.ts                 # Cấu hình robots động cho SEO
+    sitemap.ts                # Khởi tạo sitemap XML động
+    practice/
+      page.tsx                # Trang Luyện tập ngẫu nhiên tính giờ
+      practice.css            # Stylesheet cổ phong trang luyện tập
+    landing/
+      page.tsx                # Landing page giới thiệu game
+      landing.css             # Stylesheet cho landing page
     providers/
       ProgressProvider.tsx    # Context XP / streak / progress
   components/
@@ -51,9 +63,15 @@ src/
     ScoreStrip.tsx            # Điểm nét đúng / lần thử
     GroupTabs.tsx             # Tab chọn nhóm chủ đề
     CharacterSelector.tsx     # Selector chữ Hán
+    CookieBanner.tsx          # Cookie Consent Banner cổ phong
   hooks/
     useLocalStorage.ts        # Persistent state hook
     useAudio.ts               # Web Audio API SFX hook
+tests/
+  e2e/
+    practice.spec.ts          # E2E test cho chế độ Luyện tập
+    hsk.spec.ts               # E2E test cho HSK selector
+    mobile.spec.ts            # E2E test cho hiển thị mobile
 public/
   data/vocabulary.json        # Data chữ Hán (GROUPS[])
 ```
@@ -67,6 +85,18 @@ npm run dev
 ```
 
 ## Lịch sử thay đổi
+
+### v1.3 — Chế độ Luyện tập Ngẫu nhiên Tính giờ & Playwright E2E (2026-05-25)
+- **Trang Luyện tập mới `/practice`**: Chế độ chơi ngẫu nhiên 3, 5, 7 từ HSK (thuật toán Fisher-Yates) có đồng hồ đếm giờ khung gỗ cổ điển và hạt ngọc tiến trình.
+- **Auto-advance & Skip**: Viết đúng chữ tự động phát âm và chuyển chữ sau 800ms, có nút Skip nhảy nhanh và phần thưởng XP tốc độ.
+- **Playwright E2E Tests**: Tích hợp kịch bản kiểm thử E2E tự động toàn diện `tests/e2e/practice.spec.ts` (vượt qua thành công 100% trong 2.8 giây sử dụng LocalStorage Script bypass Cookie banner).
+- **Cập nhật Landing Page**: Bổ sung thông tin Luyện tập tính giờ, nâng cấp giới thiệu lên 400+ từ HSK 1-3 và chuyển sang Next.js Link điều hướng SPA.
+
+### v1.2 — Từ vựng HSK 2/3 mở rộng, SEO nâng cao & Cookie Banner (2026-05-25)
+- **Mở rộng kho từ vựng**: Bổ sung nhóm "Bộ phận cơ thể" (HSK1), "Màu sắc" (HSK2), "Thiên nhiên & Bốn mùa" (HSK3) nâng quy mô lên 400+ chữ Hán.
+- **Sửa lỗi ký tự phồn thể**: Thay thế ký tự phồn thể `興` thành giản thể chuẩn `兴` tránh lỗi HanziWriter CDN load nét vẽ.
+- **Tối ưu SEO**: Tích hợp metadata Open Graph, Twitter Cards, robots.ts động, sitemap.xml động và canonical URL.
+- **Cookie Consent Banner**: Component Cookie Banner mực tàu giấy dó xin phép sử dụng cookie tích hợp Google Analytics Consent Mode.
 
 ### v1.1 — Cải thiện analytics & dropdown HSK level (2026-05-24)
 - Inline `GA_TRACKING_ID` từ env var `NEXT_PUBLIC_GA_ID` trong layout.tsx — bỏ dependency vào analytics utils
