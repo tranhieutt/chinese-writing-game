@@ -35,7 +35,6 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
 
   // Refs cho hệ thống tô màu nét SVG (giống bản gốc app.js)
   const strokeColorMapRef = useRef<Record<number, string>>({});
-  const strokeObserverRef = useRef<MutationObserver | null>(null);
 
   // Refs để lưu trữ các callback nhằm tránh việc useEffect phụ thuộc vào chúng
   // và bị restart liên tục mỗi khi state của parent thay đổi (lỗi reset game).
@@ -112,7 +111,7 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     return Array.from(mainLayer.querySelectorAll(':scope > path')) as SVGPathElement[];
   };
 
-  /** Áp dụng tất cả màu đã lưu lên SVG paths bằng setAttribute (giống bản gốc app.js) */
+  /** Áp dụng tất cả màu đã lưu lên SVG paths bằng inline style */
   const applyAllStrokeColors = () => {
     const paths = getMainStrokePaths();
     if (!paths || paths.length === 0) return;
@@ -120,46 +119,23 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     Object.entries(strokeColorMapRef.current).forEach(([idx, color]) => {
       const path = paths[parseInt(idx)];
       if (!path) return;
-      // Dùng setAttribute giống bản gốc app.js — HanziWriter dùng SVG attribute
-      // cho stroke, nên ta override trực tiếp trên cùng level.
-      // MutationObserver sẽ reapply sau mỗi lần HanziWriter re-render.
-      path.setAttribute('stroke', color);
+      path.style.stroke = color; // Sử dụng inline style có độ ưu tiên cao hơn SVG attribute
     });
   };
 
-  /** Tô màu cho 1 nét cụ thể và lưu vào map (giống bản gốc app.js) */
+  /** Tô màu cho 1 nét cụ thể và lưu vào map */
   const colorStrokeSVG = (strokeIdx: number, color: string) => {
     strokeColorMapRef.current[strokeIdx] = color;
-    // Apply ngay + observer sẽ reapply sau mỗi HanziWriter re-render (giống bản gốc)
+    // Apply ngay
     requestAnimationFrame(() => applyAllStrokeColors());
   };
 
-  /** Xóa toàn bộ màu stroke đã override trên SVG attribute */
+  /** Xóa toàn bộ màu stroke đã gán trên inline style */
   const clearAllStrokeStyles = () => {
-    // Không cần xóa attribute vì khi HanziWriter hideCharacter()/re-init
-    // nó sẽ tạo lại SVG paths mới hoàn toàn.
-    // Chỉ cần reset bản đồ màu là đủ.
-  };
-
-  /** Khởi tạo MutationObserver để reapply màu khi HanziWriter re-render */
-  const initStrokeObserver = () => {
-    if (strokeObserverRef.current) {
-      strokeObserverRef.current.disconnect();
-    }
-    const container = containerRef.current;
-    if (!container) return;
-
-    strokeObserverRef.current = new MutationObserver(() => {
-      if (Object.keys(strokeColorMapRef.current).length === 0) return;
-      // requestAnimationFrame đảm bảo reapply SAU khi HanziWriter render xong
-      requestAnimationFrame(() => applyAllStrokeColors());
-    });
-
-    strokeObserverRef.current.observe(container, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['stroke', 'opacity', 'style'],
+    const paths = getMainStrokePaths();
+    if (!paths) return;
+    paths.forEach(path => {
+      path.style.stroke = ''; // Khôi phục về mặc định
     });
   };
 
@@ -175,9 +151,6 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     setErrors(0);
     setCurrentStrokeIndex(0);
     strokeColorMapRef.current = {};
-    if (strokeObserverRef.current) {
-      strokeObserverRef.current.disconnect();
-    }
 
     const writer = HanziWriter.create(containerRef.current, character, {
       width: size.width,
@@ -202,7 +175,10 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
           .then(onCompleteLoader)
           .catch(() => {
             fetch(`https://unpkg.com/hanzi-writer-data@latest/${char}.json`)
-              .then((r) => r.json())
+              .then((r) => {
+                if (!r.ok) throw new Error();
+                return r.json();
+              })
               .then(onCompleteLoader);
           });
       },
@@ -211,17 +187,18 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
     writerRef.current = writer;
 
     // Lưu tổng số nét
-    writer.getCharacterData().then((data) => {
-      setTotalStrokes(data.strokes.length);
-    });
+    writer.getCharacterData()
+      .then((data) => {
+        setTotalStrokes(data.strokes.length);
+      })
+      .catch((err) => {
+        console.warn('getCharacterData failed:', err);
+      });
 
-    // Khởi tạo observer cho stroke coloring
-    initStrokeObserver();
-
-    // Cleanup khi component unmount
+    // Cleanup khi component unmount hoặc chuyển chữ
     return () => {
-      if (strokeObserverRef.current) {
-        strokeObserverRef.current.disconnect();
+      if (writerRef.current) {
+        writerRef.current.cancelQuiz();
       }
       writerRef.current = null;
     };
@@ -230,14 +207,21 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
 
   // Cập nhật kích thước canvas khi màn hình thay đổi
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     const handleResize = () => {
-      if (writerRef.current) {
-        const size = getWriterSize();
-        writerRef.current.updateDimensions({ width: size.width, height: size.height });
-      }
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        if (writerRef.current) {
+          const size = getWriterSize();
+          writerRef.current.updateDimensions({ width: size.width, height: size.height });
+        }
+      }, 150);
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   // Xử lý các chế độ gameMode (preview, quiz)
@@ -292,9 +276,6 @@ export const HanziCanvas: React.FC<HanziCanvasProps> = ({
           setAttempts((prev) => prev + 1);
         },
         onComplete: () => {
-          if (strokeObserverRef.current) {
-            strokeObserverRef.current.disconnect();
-          }
           playSFXRef.current('complete');
           onCompleteRef.current();
           onModeChangeRef.current('done');

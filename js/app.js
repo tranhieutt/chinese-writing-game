@@ -472,7 +472,10 @@ function updateMascot(state, customMessage) {
   const avatar = document.querySelector('.mascot-avatar');
   if (avatar) {
     avatar.style.animation = 'none';
-    void avatar.offsetWidth; // Reflow to reset animation
+    // Đọc thuộc tính offsetWidth để chủ động ép trình duyệt reflow đồng bộ (intentional reflow trick).
+    // Việc này bắt buộc trình duyệt phải áp dụng 'animation: none' ngay lập tức trước khi
+    // chúng ta kích hoạt lại animation 'panda-bounce' ở dòng dưới.
+    void avatar.offsetWidth; 
     avatar.style.animation = 'panda-bounce 0.4s ease-out';
     setTimeout(() => {
       avatar.style.animation = 'panda-bounce 3s infinite ease-in-out';
@@ -522,6 +525,7 @@ let resizeWriterTimeout;
 function resizeHanziWriter() {
   clearTimeout(resizeWriterTimeout);
   resizeWriterTimeout = setTimeout(() => {
+    resizeConfettiCanvas(); // Đưa vào đây để cùng hưởng cơ chế trì hoãn 150ms
     if (writer && typeof HanziWriter !== 'undefined') {
       const size = getWriterSize();
       writer.updateDimensions({ width: size.width, height: size.height });
@@ -536,7 +540,6 @@ function resizeHanziWriter() {
 }
 
 window.addEventListener('resize', () => {
-  resizeConfettiCanvas();
   resizeHanziWriter();
 });
 
@@ -630,7 +633,7 @@ function buildCharSelector() {
 }
 
 function selectChar(idx) {
-  if (strokeObserver) strokeObserver.disconnect();
+  clearAllStrokeStyles();
   Object.keys(strokeColorMap).forEach(k => delete strokeColorMap[k]);
   // Hủy phát âm đang chạy khi đổi chữ
   if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -750,8 +753,6 @@ function initWriter(onReady) {
     }
   }, 100);
 
-  initStrokeObserver();
-
   if (onReady) {
     setTimeout(onReady, 600);
   }
@@ -860,9 +861,11 @@ function startQuiz() {
       writer.updateColor('drawingColor', nextColor);
     },
     onComplete: (summaryData) => {
-      if (strokeObserver) strokeObserver.disconnect();
       setMode('done');
       document.getElementById('complete-overlay').classList.remove('show');
+      // Trích xuất thuộc tính offsetWidth để ép trình duyệt đồng bộ hóa hiển thị (reflow).
+      // Giúp reset CSS keyframe animation trên lớp phủ hoàn thành (.complete-overlay) trước khi
+      // chúng ta thêm lại class 'show' để bắt đầu hiệu ứng hiển thị.
       void document.getElementById('complete-overlay').offsetWidth;
       document.getElementById('complete-overlay').classList.add('show');
       document.getElementById('complete-sub').textContent =
@@ -890,7 +893,7 @@ function startQuiz() {
 }
 
 function resetChar() {
-  if (strokeObserver) strokeObserver.disconnect();
+  clearAllStrokeStyles();
   initAudio();
   Object.keys(strokeColorMap).forEach(k => delete strokeColorMap[k]);
   document.getElementById('complete-overlay').classList.remove('show');
@@ -923,34 +926,12 @@ function buildStrokeDots(n) {
   }
 }
 
-// Lưu màu cho từng nét để reapply khi MutationObserver kích hoạt
+// Lưu màu cho từng nét
 const strokeColorMap = {};
-let strokeObserver = null;
-
-function initStrokeObserver() {
-  if (strokeObserver) strokeObserver.disconnect();
-  const container = document.getElementById('hanzi-container');
-  if (!container) return;
-
-  strokeObserver = new MutationObserver(() => {
-    if (Object.keys(strokeColorMap).length === 0) return;
-    // requestAnimationFrame đảm bảo reapply SAU khi HanziWriter re-render xong
-    // (HanziWriter gọi nextStroke() → showStroke() → re-render → override màu
-    //  → observer fire → rAF → reapply đè lên, đúng thứ tự)
-    requestAnimationFrame(() => applyAllStrokeColors());
-  });
-
-  strokeObserver.observe(container, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['stroke', 'opacity', 'style']
-  });
-}
 
 function colorStrokeSVG(strokeIdx, color) {
   strokeColorMap[strokeIdx] = color;
-  // Apply ngay + observer sẽ reapply sau mỗi HanziWriter re-render
+  // Apply ngay
   requestAnimationFrame(() => applyAllStrokeColors());
 }
 
@@ -978,7 +959,15 @@ function applyAllStrokeColors() {
   Object.entries(strokeColorMap).forEach(([idx, color]) => {
     const path = paths[parseInt(idx)];
     if (!path) return;
-    path.setAttribute('stroke', color);
+    path.style.stroke = color; // Sử dụng inline style có độ ưu tiên cao hơn
+  });
+}
+
+function clearAllStrokeStyles() {
+  const paths = getMainStrokePaths();
+  if (!paths) return;
+  paths.forEach(path => {
+    path.style.stroke = ''; // Trả về mặc định
   });
 }
 

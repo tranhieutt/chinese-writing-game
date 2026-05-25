@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { hskVocabulary, strokeColors } from '@/data/hskVocabulary';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -87,6 +87,41 @@ export default function GamePage() {
   const [fbDifficulty, setFbDifficulty] = useState<string>('');
   const [fbFeatures, setFbFeatures] = useState<string>('');
   const [fbSuccess, setFbSuccess] = useState<boolean>(false);
+
+  const completeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // PR-04: Thêm state quản lý kích thước màn hình động cho Confetti
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 600,
+    height: typeof window !== 'undefined' ? window.innerHeight : 600,
+  });
+
+  useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      }, 150); // Debounce 150ms
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, []);
+
+  // Cleanup timeout phát âm complete khi unmount
+  useEffect(() => {
+    return () => {
+      if (completeTimeoutRef.current) {
+        clearTimeout(completeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Cập nhật nhóm khi activeGroupId đổi
   useEffect(() => {
@@ -251,7 +286,8 @@ export default function GamePage() {
     handleMascotSpeech('complete');
     trackEvent('quiz_completed', { char_name: activeChar.char, total_attempts: scoreAttempts + 1, strokes: activeChar.strokes });
     // Tự động phát âm khi viết hoàn tất chữ Hán để ghi nhớ sâu sắc
-    setTimeout(() => {
+    if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
+    completeTimeoutRef.current = setTimeout(() => {
       pronounceChar();
     }, 500);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -264,8 +300,8 @@ export default function GamePage() {
         <Confetti
           numberOfPieces={120}
           recycle={false}
-          width={typeof window !== 'undefined' ? window.innerWidth : 600}
-          height={typeof window !== 'undefined' ? window.innerHeight : 600}
+          width={windowSize.width}
+          height={windowSize.height}
         />
       )}
 
