@@ -1,0 +1,33 @@
+I. Nhận diện & Tương tác Mạng xã hội
+1. Favicon & Apple Touch Icon
+Cái này sẽ hiển thị ở tab trình duyệt, lúc save về màn hình iPhone, ở kết quả tìm kiếm google, ... => Dùng luôn logo nếu lười hoặc dùng các công cụ tạo Favicon
+2. Thẻ Open Graph & Twitter Cards
+Cài này sẽ quyết định link website chia sẻ lên social như Facebook, Twiiter (X), ... sẽ trông như thế nào, ảnh hiện ra là gì, tiêu đề ra sao. Tại sao website của mình share lên social lại không có ảnh, có mỗi cái text, ... bla bla => Chỗ này cần chuẩn bị ảnh nếu muốn, tiêu đồ website
+3. (Dynamic) Title & Meta Description
+Cái này sẽ hiển thị ở Tab trình duyệt và rất quan trọng cho việc SEO Google (dễ hiểu thì SEO Google sẽ giúp dễ tìm kiếm website của bạn trên Google hơn, và làm tốt bộ thẻ Title, Description, ... này rất quan trọng), nếu lên google search Lê Huy Thái sẽ thấy một vài kết quả đầu là website của mình => Đây chính là ví dụ.
+4. Tệp robots.txt và sitemap.xml (nếu cần)
+Giúp Google Index website của bạn nhanh hơn, để dễ hiểu thì bạn có 5 page và có thể thấy 5 page đó trên kết qủa tìm kiếm google sớm
+II. Vận hành & Tương tác
+Tạo ra một web app vibe coding thì nhanh, nhưng đang có bao nhiêu người dùng, tháng qua có bao nhiêu truy cập, có gặp lỗi nghiêm trọng không, ... nếu không biệt mấy cái này thì khá là thiếu sót, bạn có thể:
+1. Web Analytic (Ví dụ: Google Analytics)
+Tích hợp cái này giúp bạn biết có bao nhiêu người đang truy cập, họ thích vào những page nào, click vào đâu nhiều nhất. Tóm lại bạn sẽ biết thế giới đang dùng web app của bạn như thế nào.
+2. Bot Thông báo (Telegram/Discord/...)
+Rất hữu ích cho giai đoạn đầu. Cứ coi như Web App của bạn có khả năng thông báo cho bạn bằng cách bắn Message qua Telegram. Thì cách khai thác rất đa dạng, ví dụ là lỗi nghiêm trọng (thường lúc tương tác bên thứ 3, tác vụ nặng, hay logic bạn cũng chưa hiểu, ... => có thể bắn về để lúc nào check), hoặc những vấn đề cần lưu ý (giả dụ có user mới mua hàng, ...)
+III. Tối ưu Hiệu suất & Độ ổn định
+1. Sử dụng công cụ đo hiệu suất
+Có nhiều công cụ đo hiệu suất của web app để đi cải thiện. Đơn giản, có sẵn nhất có thể dùng DevTools Lighthouse (Chuột phải trên của sổ trình duyệt > Inspect (hoặc Thăm dò phần tử) > Lighthouse > Analyze page load. Nếu điểm quá thấp hoặc có vấn đề nghiêm trọng => Copy đưa cho AI fix
+2. Lazy Loading Image & Tối ưu định dạng
+AI thường để ảnh tải toàn bộ cùng lúc làm web chậm. Hãy yêu cầu nó thêm thuộc tính loading azy vào các thẻ img và ưu tiên dùng định dạng WebP.
+3. Web App Manifest (PWA cơ bản)
+Bảo AI tạo file manifest.json. Trò này rất đơn giản nhưng giúp trình duyệt nhận diện web của anh em như một ứng dụng, cho phép hiện nút "Add to Home Screen" trên điện thoại. Để dễ hiểu thì bạn vừa có 1 mobile app từ web app của mình với chi phí = 0 đồng và thời gian dưới 30ph.
+4. Error Boundaries (Xử lý lỗi sập UI)
+Nếu một component (phần nhỏ) bị lỗi logic, có thể toàn bộ màn hình sẽ trắng xóa. Yêu cầu AI bọc app trong một Error Boundary để nếu có lỗi, nó chỉ hiện thông báo "Có chút sự cố, vui lòng tải lại trang" thay vì sập toàn bộ hệ thống.
+IV. Nâng cao trải nghiệm người dùng
+Một số mấy cái khái khả năng là AI nó cũng có làm, nhưng mình cứ đưa vào làm check list
+1. Trạng thái Loading cho màn hình, khu vực, ...
+2. Trạng thái Rỗng: Nếu không hoặc chưa có data thì hiển thị sao
+3. Thông báo hệ thống: Ví dụ xoá, tạo, ... nên có 1 cái popup/toast/... nhỏ
+4. Trang 404: Khi vào link không tồn tại thì hiển thị sao
+5. Scroll to Top: Nút này cần cho những website dài
+6. Header/Footer chuẩn chỉ: Điều hướng đầy đủ, ổn định dữa các page, ...
+7. Cookie Consent Banner (nếu cần): Một thanh thông báo nhỏ dưới đáy màn hình xin phép sử dụng Cookie
