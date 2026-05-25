@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Volume2, VolumeX, HelpCircle, Flame, Sparkles, Award } from 'lucide-react';
+import Link from 'next/link';
 
 interface StatsPanelProps {
   xp: number;
@@ -69,6 +70,14 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
             {isMuted ? <VolumeX className="w-4 h-4 inline" /> : <Volume2 className="w-4 h-4 inline" />}
           </button>
           
+          <Link 
+            href="/practice" 
+            className="btn-practice-nav"
+            title="Luyện tập ngẫu nhiên tính giờ"
+          >
+            🎯 Luyện ngẫu nhiên
+          </Link>
+
           <select 
             value={currentHsk} 
             onChange={(e) => onHskChange(e.target.value)}

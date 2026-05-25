@@ -1965,3 +1965,34 @@ body::after {
   border-color: var(--ds-blueprint);
 }
 
+/* ── Practice Nav Button ── */
+.btn-practice-nav {
+  background: var(--ds-rice);
+  border: 2px solid var(--ds-ink);
+  border-radius: var(--ds-radius);
+  height: 34px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-family: var(--font-main);
+  font-weight: 800;
+  color: var(--ds-ink);
+  padding: 0 12px;
+  text-decoration: none;
+  transition: all 0.15s;
+  box-shadow: 2px 3px 0 var(--ds-ink);
+}
+
+.btn-practice-nav:hover {
+  background: #f7df98; /* Soft gold hover background */
+  transform: translateY(-1px);
+  box-shadow: 2px 4px 0 var(--ds-ink);
+}
+
+.btn-practice-nav:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--ds-ink);
+}
+
