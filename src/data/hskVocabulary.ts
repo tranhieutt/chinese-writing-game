@@ -246,9 +246,9 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "小", pinyin: "xiǎo", meaning: "⬇️ Nhỏ, Bé", strokes: 3 },
           { char: "冷", pinyin: "lěng", meaning: "🥶 Lạnh", strokes: 7 },
           { char: "热", pinyin: "rè", meaning: "🥵 Nóng", strokes: 10 },
-          { char: "高", "pinyin": "gāo", meaning: "📈 Cao", strokes: 10 },
-          { char: "興", "pinyin": "xìng", meaning: "😊 Hứng, vui", strokes: 6 },
-          { char: "漂", "pinyin": "piào", meaning: "✨ Đẹp, trôi", strokes: 14 },
+          { char: "高", pinyin: "gāo", meaning: "📈 Cao", strokes: 10 },
+          { char: "兴", pinyin: "xìng", meaning: "😊 Hứng, vui", strokes: 6 },
+          { char: "漂", pinyin: "piào", meaning: "✨ Đẹp, trôi", strokes: 14 },
           { char: "亮", "pinyin": "liang", meaning: "💡 Sáng, đẹp", strokes: 9 },
           { char: "爱", "pinyin": "ài", meaning: "❤️ Yêu, thích", strokes: 10 },
           { char: "对", "pinyin": "duì", meaning: "✅ Đúng, đối với", strokes: 5 },
@@ -272,10 +272,23 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "云", "pinyin": "yún", meaning: "☁️ Mây", strokes: 4 },
           { char: "雨", "pinyin": "yǔ", meaning: "🌧️ Mưa", strokes: 8 },
           { char: "雪", "pinyin": "xuě", meaning: "❄️ Tuyết", strokes: 11 },
-          { char: "猫", "pinyin": "māo", meaning: "🐱 Mèo", strokes: 11 },
-          { char: "狗", "pinyin": "gǒu", meaning: "🐶 Chó", strokes: 8 },
-          { char: "汉", "pinyin": "hàn", meaning: "🇨🇳 Hán", strokes: 5 },
-          { char: "语", "pinyin": "yǔ", meaning: "🗣️ Ngôn ngữ", strokes: 9 }
+          { char: "猫", pinyin: "māo", meaning: "🐱 Mèo", strokes: 11 },
+          { char: "狗", pinyin: "gǒu", meaning: "🐶 Chó", strokes: 8 },
+          { char: "汉", pinyin: "hàn", meaning: "🇨🇳 Hán", strokes: 5 },
+          { char: "语", pinyin: "yǔ", meaning: "🗣️ Ngôn ngữ", strokes: 9 }
+        ]
+      },
+      {
+        id: "body-parts",
+        label: "Bộ phận cơ thể & Tượng hình cơ bản",
+        icon: "👄",
+        chars: [
+          { char: "口", pinyin: "kǒu", meaning: "👄 Miệng, lối vào", strokes: 3 },
+          { char: "耳", pinyin: "ěr", meaning: "👂 Tai", strokes: 6 },
+          { char: "目", pinyin: "mù", meaning: "👁️ Mắt", strokes: 5 },
+          { char: "手", pinyin: "shǒu", meaning: "✋ Tay", strokes: 4 },
+          { char: "足", pinyin: "zú", meaning: "👣 Chân", strokes: 7 },
+          { char: "心", pinyin: "xīn", meaning: "❤️ Tim, tâm trí", strokes: 4 }
         ]
       }
     ]
@@ -408,6 +421,20 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "往", pinyin: "wǎng", meaning: "➡️ Hướng về, đi", strokes: 8 },
           { char: "向", pinyin: "xiàng", meaning: "➡️ Hướng về, phía", strokes: 6 }
         ]
+      },
+      {
+        id: "hsk2-colors",
+        label: "Màu sắc Cổ điển",
+        icon: "🎨",
+        chars: [
+          { char: "红", pinyin: "hóng", meaning: "🔴 Màu đỏ", strokes: 6 },
+          { char: "黄", pinyin: "huáng", meaning: "🟡 Màu vàng", strokes: 11 },
+          { char: "蓝", pinyin: "lán", meaning: "🔵 Màu xanh lam", strokes: 13 },
+          { char: "绿", pinyin: "lǜ", meaning: "🟢 Màu xanh lá", strokes: 11 },
+          { char: "黑", pinyin: "hēi", meaning: "⚫ Màu đen", strokes: 12 },
+          { char: "白", pinyin: "bái", meaning: "⚪ Màu trắng", strokes: 5 },
+          { char: "色", pinyin: "sè", meaning: "🎨 Màu sắc", strokes: 6 }
+        ]
       }
     ]
   },
@@ -479,7 +506,7 @@ export const hskVocabulary: Record<string, HskLevelData> = {
       },
       {
         id: "hsk3-nature",
-        label: "Thiên nhiên & Động vật",
+        label: "Thiên nhiên & Bốn mùa",
         icon: "🐼",
         chars: [
           { char: "熊", pinyin: "xióng", meaning: "🐻 Con gấu", strokes: 14 },
@@ -488,7 +515,15 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "树", pinyin: "shù", meaning: "🌳 Cây", strokes: 9 },
           { char: "草", pinyin: "cǎo", meaning: "🌱 Cỏ", strokes: 9 },
           { char: "花", pinyin: "huā", meaning: "🌸 Hoa, tiêu tiền", strokes: 7 },
-          { char: "阳", pinyin: "yáng", meaning: "☀️ Dương, mặt trời", strokes: 6 }
+          { char: "阳", pinyin: "yáng", meaning: "☀️ Dương, mặt trời", strokes: 6 },
+          { char: "春", pinyin: "chūn", meaning: "🌸 Mùa xuân", strokes: 9 },
+          { char: "夏", pinyin: "xià", meaning: "☀️ Mùa hạ", strokes: 10 },
+          { char: "秋", pinyin: "qiū", meaning: "🍂 Mùa thu", strokes: 9 },
+          { char: "冬", pinyin: "dōng", meaning: "❄️ Mùa đông", strokes: 5 },
+          { char: "季", pinyin: "jì", meaning: "📅 Mùa, quý", strokes: 8 },
+          { char: "河", pinyin: "hé", meaning: "🌊 Sông", strokes: 8 },
+          { char: "江", pinyin: "jiāng", meaning: "🌊 Sông lớn (Trường Giang)", strokes: 6 },
+          { char: "海", pinyin: "hǎi", meaning: "🌊 Biển, đại dương", strokes: 10 }
         ]
       },
       {
