@@ -178,7 +178,7 @@ export function CookieBanner() {
       <div className="cookie-banner-content">
         <span className="cookie-banner-icon">🍪</span>
         <div className="cookie-banner-text">
-          <h4 className="cookie-banner-title">Quyền riêng tư & Bánh quy</h4>
+          <h4 className="cookie-banner-title">Quyền riêng tư & Cookie</h4>
           <p className="cookie-banner-desc">
             Trang web sử dụng cookie để đo lường lượng truy cập và cải thiện trải nghiệm học tập của bạn. 
             Mọi dữ liệu hoàn toàn ẩn danh. Bạn có đồng ý cho phép sử dụng cookie không?
