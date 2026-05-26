@@ -575,14 +575,25 @@ export default function TournamentPage() {
               </div>
             )}
 
-            <button
-              type="button"
-              className="btn-start-practice"
-              onClick={handleStartTournament}
-              style={{ marginTop: '16px' }}
-            >
-              🚀 Bắt Đầu Đua Tài!
-            </button>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '16px', width: '100%' }}>
+              <Link href="/" style={{ flex: 1, textDecoration: 'none' }}>
+                <button
+                  type="button"
+                  className="btn-setup-back"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  🏠 Về trang chủ
+                </button>
+              </Link>
+              <button
+                type="button"
+                className="btn-start-practice"
+                onClick={handleStartTournament}
+                style={{ flex: 2, marginTop: 0 }}
+              >
+                🚀 Bắt Đầu Đua Tài!
+              </button>
+            </div>
           </div>
         )}
 

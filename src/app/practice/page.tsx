@@ -451,14 +451,26 @@ export default function PracticePage() {
               </div>
             </div>
 
-            <button
-              type="button"
-              id="start-practice-btn"
-              className="btn-start-practice"
-              onClick={handleStartPractice}
-            >
-              🔥 Bắt đầu Luyện tập
-            </button>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '16px', width: '100%' }}>
+              <Link href="/" style={{ flex: 1, textDecoration: 'none' }}>
+                <button
+                  type="button"
+                  className="btn-setup-back"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  🏠 Về trang chủ
+                </button>
+              </Link>
+              <button
+                type="button"
+                id="start-practice-btn"
+                className="btn-start-practice"
+                onClick={handleStartPractice}
+                style={{ flex: 2, marginTop: 0 }}
+              >
+                🔥 Bắt đầu Luyện tập
+              </button>
+            </div>
           </div>
         )}
 

@@ -3,6 +3,7 @@
 import React from 'react';
 import { Volume2, VolumeX, HelpCircle, Flame, Sparkles, Award } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface StatsPanelProps {
   xp: number;
@@ -27,6 +28,8 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
 }) => {
   const currentLevelXP = xp % 500;
   const progressPercent = (currentLevelXP / 500) * 100;
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
 
   return (
     <div className="header">
@@ -71,6 +74,16 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
           >
             {isMuted ? <VolumeX className="w-4 h-4 inline" /> : <Volume2 className="w-4 h-4 inline" />}
           </button>
+          
+          {!isHomePage && (
+            <Link 
+              href="/" 
+              className="btn-home-nav"
+              title="Quay lại học theo từ"
+            >
+              🏠 Học theo từ
+            </Link>
+          )}
           
           <Link 
             href="/practice" 

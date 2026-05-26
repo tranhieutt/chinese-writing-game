@@ -490,3 +490,34 @@
     font-size: 13px;
   }
 }
+
+/* ── Setup Back Button ── */
+.btn-setup-back {
+  width: 100%;
+  background: var(--ds-rice);
+  color: var(--ds-ink);
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 16px;
+  padding: 14px 20px;
+  border: 3px solid var(--ds-ink);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 3px 4px 0 var(--ds-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-setup-back:hover {
+  background: #fdf8eb;
+  transform: translateY(-1px);
+  box-shadow: 3px 5px 0 var(--ds-ink);
+}
+
+.btn-setup-back:active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0 var(--ds-ink);
+}
