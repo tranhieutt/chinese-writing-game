@@ -1219,7 +1219,9 @@ body::after {
     overflow: hidden !important;
   }
 
-  .container {
+  .container,
+  .practice-container,
+  .tournament-container {
     width: 100vw !important;
     max-width: 100vw !important;
     box-sizing: border-box;
@@ -1852,7 +1854,9 @@ body::after {
     overflow-y: auto;
   }
 
-  .container {
+  .container,
+  .practice-container,
+  .tournament-container {
     flex: none;
     min-height: unset;
     overflow-y: visible;

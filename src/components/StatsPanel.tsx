@@ -85,21 +85,25 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
             </Link>
           )}
           
-          <Link 
-            href="/practice" 
-            className="btn-practice-nav"
-            title="Luyện tập ngẫu nhiên tính giờ"
-          >
-            🎯 Luyện ngẫu nhiên
-          </Link>
+          {pathname !== '/practice' && (
+            <Link 
+              href="/practice" 
+              className="btn-practice-nav"
+              title="Luyện tập ngẫu nhiên tính giờ"
+            >
+              🎯 Luyện ngẫu nhiên
+            </Link>
+          )}
 
-          <Link 
-            href="/tournament" 
-            className="btn-tournament-nav"
-            title="Đấu trường thi đấu tốc độ"
-          >
-            🏆 Đấu Trường
-          </Link>
+          {pathname !== '/tournament' && (
+            <Link 
+              href="/tournament" 
+              className="btn-tournament-nav"
+              title="Đấu trường thi đấu tốc độ"
+            >
+              🏆 Đấu Trường
+            </Link>
+          )}
 
           <select 
             value={currentHsk} 
