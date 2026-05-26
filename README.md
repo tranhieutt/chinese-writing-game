@@ -11,7 +11,8 @@ Web game luyện viết chữ Hán theo thứ tự nét bút, thiết kế theo 
 - **Luyện viết** — vẽ nét theo đúng thứ tự trên canvas, nhận phản hồi tức thì
 - **Xem nét** — animation thứ tự nét bút từng chữ
 - **Tô màu nét** — mỗi nét một màu riêng sau khi vẽ đúng
-- **🎯 Luyện ngẫu nhiên tính giờ** — Chế độ đấu tính giờ (3/5/7 từ ngẫu nhiên Fisher-Yates), đếm giờ khung gỗ, hạt ngọc bích tiến độ emerald/gold, mascost panda và thưởng XP tốc độ
+- **🎯 Luyện ngẫu nhiên tính giờ** — Chế độ đấu tính giờ (3/5/7 từ ngẫu nhiên Fisher-Yates), đếm giờ khung gỗ, hạt ngọc bích tiến độ emerald/gold, mascot panda và thưởng XP tốc độ
+- **🏆 Đấu trường HSK** — Chế độ pass-and-play 2-8 người, chọn HSK 1/2/3, thi viết 3/5/7 từ, bấm giờ từng lượt, phạt bỏ qua +20s, podium top 3 và bảng xếp hạng theo thời gian
 - **Gamification** — XP, cấp độ, streak ngày học, confetti khi hoàn thành
 - **Mascot gấu trúc** — phản hồi động lực theo từng tình huống
 - **Âm thanh** — SFX bằng Web Audio API (không cần file âm thanh ngoài)
@@ -51,6 +52,9 @@ src/
     practice/
       page.tsx                # Trang Luyện tập ngẫu nhiên tính giờ
       practice.css            # Stylesheet cổ phong trang luyện tập
+    tournament/
+      page.tsx                # Trang Đấu trường HSK nhiều người
+      tournament.css          # Stylesheet cổ phong trang đấu trường
     landing/
       page.tsx                # Landing page giới thiệu game
       landing.css             # Stylesheet cho landing page
@@ -64,12 +68,14 @@ src/
     GroupTabs.tsx             # Tab chọn nhóm chủ đề
     CharacterSelector.tsx     # Selector chữ Hán
     CookieBanner.tsx          # Cookie Consent Banner cổ phong
+    TournamentMascot.tsx      # Mascot đấu trường nhiều nhân vật
   hooks/
     useLocalStorage.ts        # Persistent state hook
     useAudio.ts               # Web Audio API SFX hook
 tests/
   e2e/
     practice.spec.ts          # E2E test cho chế độ Luyện tập
+    tournament.spec.ts        # E2E test cho Đấu trường HSK
     hsk.spec.ts               # E2E test cho HSK selector
     mobile.spec.ts            # E2E test cho hiển thị mobile
 public/
@@ -85,6 +91,13 @@ npm run dev
 ```
 
 ## Lịch sử thay đổi
+
+### v1.4 — Đấu trường HSK nhiều người (2026-05-26)
+- **Trang Đấu trường mới `/tournament`**: Chế độ pass-and-play cho 2-8 người chơi, nhập tên, chọn mascot và cấu hình cấp HSK 1/2/3.
+- **Thi viết tính giờ**: Mỗi người lần lượt viết 3, 5 hoặc 7 chữ ngẫu nhiên; đồng hồ riêng từng lượt, bỏ qua chữ bị cộng phạt 20 giây.
+- **Bảng vinh danh**: Tổng kết theo thời gian hoàn thành, podium top 3, bảng xếp hạng đầy đủ và confetti khi kết thúc giải.
+- **Mascot đa nhân vật**: Bổ sung panda, mèo, thỏ, gấu, hổ, cáo với phản hồi động, mắt tracking chuột và bong bóng trạng thái.
+- **Điều hướng mới**: Thêm nút Đấu trường HSK ở landing page và thanh stats để vào nhanh chế độ thi đấu.
 
 ### v1.3 — Chế độ Luyện tập Ngẫu nhiên Tính giờ & Playwright E2E (2026-05-25)
 - **Trang Luyện tập mới `/practice`**: Chế độ chơi ngẫu nhiên 3, 5, 7 từ HSK (thuật toán Fisher-Yates) có đồng hồ đếm giờ khung gỗ cổ điển và hạt ngọc tiến trình.

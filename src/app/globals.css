@@ -1996,3 +1996,35 @@ body::after {
   box-shadow: 1px 1px 0 var(--ds-ink);
 }
 
+/* ── Tournament Nav Button ── */
+.btn-tournament-nav {
+  background: var(--ds-cinnabar-soft);
+  border: 2px solid var(--ds-ink);
+  border-radius: var(--ds-radius);
+  height: 34px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-family: var(--font-main);
+  font-weight: 800;
+  color: var(--ds-ink);
+  padding: 0 12px;
+  text-decoration: none;
+  transition: all 0.15s;
+  box-shadow: 2px 3px 0 var(--ds-ink);
+}
+
+.btn-tournament-nav:hover {
+  background: #f2b5bd; /* Soft red hover background */
+  transform: translateY(-1px);
+  box-shadow: 2px 4px 0 var(--ds-ink);
+}
+
+.btn-tournament-nav:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 var(--ds-ink);
+}
+
+

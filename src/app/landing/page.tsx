@@ -151,12 +151,15 @@ export default function LandingPage() {
           vui như chơi, nhớ như in, phong cách cổ điển đầy màu sắc.
         </p>
 
-        <div className="lp-cta-group">
+        <div className="lp-cta-group" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link className="lp-btn-primary" href="/">
             🖌️ Học theo từ — Miễn phí
           </Link>
           <Link className="lp-btn-secondary" href="/practice" style={{ background: '#d6a85a', color: '#21394f' }}>
-            🎯 Luyện ngẫu nhiên tính giờ
+            🎯 Luyện tính giờ
+          </Link>
+          <Link className="lp-btn-secondary" href="/tournament" style={{ background: '#c95f66', color: 'white' }}>
+            🏆 Đấu trường HSK
           </Link>
         </div>
 
@@ -283,10 +286,13 @@ export default function LandingPage() {
       <section className="lp-cta-bottom">
         <div className="lp-cta-group" style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
           <Link className="lp-btn-primary" href="/">
-            🐼 Chơi ngay — Học theo từ
+            🐼 Học theo từ
           </Link>
           <Link className="lp-btn-primary" href="/practice" style={{ background: '#d6a85a', color: '#21394f' }}>
-            🎯 Thử thách Luyện tính giờ
+            🎯 Luyện tính giờ
+          </Link>
+          <Link className="lp-btn-primary" href="/tournament" style={{ background: '#c95f66', color: 'white' }}>
+            🏆 Đấu trường HSK
           </Link>
         </div>
       </section>

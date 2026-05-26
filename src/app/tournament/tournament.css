@@ -1,0 +1,832 @@
+/* ── Stylesheet cho Trang Thi Đấu Đấu Trường Cổ Phong ── */
+
+.tournament-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 16px;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+/* ── Màn hình Thiết lập (Setup Card) ── */
+.tour-card {
+  width: 100%;
+  background: linear-gradient(135deg, #fffaf0, #fbf1df);
+  border: 3px solid var(--ds-ink);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 6px 8px 0 var(--ds-ink);
+  box-sizing: border-box;
+  text-align: center;
+  position: relative;
+}
+
+.tour-card::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed rgba(33, 57, 79, 0.18);
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.tour-title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 26px;
+  color: var(--ds-ink);
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 0 rgba(33, 57, 79, 0.1);
+}
+
+.tour-desc {
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  color: #4a5d6e;
+  margin-bottom: 24px;
+  line-height: 1.45;
+}
+
+.tour-section {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.tour-section-title {
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--ds-ink);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Player Input Field list */
+.player-setup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.player-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 2px solid var(--ds-ink);
+  border-radius: 16px;
+  padding: 8px 12px;
+  box-shadow: 2px 2px 0 rgba(33, 57, 79, 0.08);
+}
+
+.mascot-avatar-small {
+  width: 44px;
+  height: 44px;
+  background: white;
+  border: 2px solid var(--ds-ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.player-name-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ds-ink);
+  outline: none;
+  padding: 6px 4px;
+}
+
+.player-name-input::placeholder {
+  color: #a4b4c2;
+  font-weight: 500;
+}
+
+.btn-random-mascot {
+  background: var(--ds-rice);
+  border: 2px solid var(--ds-ink);
+  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 1.5px 2px 0 var(--ds-ink);
+  transition: all 0.1s;
+}
+
+.btn-random-mascot:hover {
+  background: #fdf8eb;
+  transform: scale(1.05);
+}
+
+.btn-random-mascot:active {
+  transform: translateY(1.5px);
+  box-shadow: 0 0 0 var(--ds-ink);
+}
+
+/* Slider / Controller for players count */
+.players-counter-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.btn-counter {
+  background: var(--ds-rice);
+  border: 2.5px solid var(--ds-ink);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ds-ink);
+  cursor: pointer;
+  box-shadow: 2px 3px 0 var(--ds-ink);
+  transition: all 0.1s;
+}
+
+.btn-counter:hover {
+  background: #fdf8eb;
+}
+
+.btn-counter:active {
+  transform: translateY(1.5px);
+  box-shadow: 0.5px 0.5px 0 var(--ds-ink);
+}
+
+.btn-counter:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 2px 3px 0 var(--ds-ink) !important;
+}
+
+.counter-value {
+  font-family: "Noto Serif SC", serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ds-ink);
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Màn hình trung chuyển (Player Transition) ── */
+.transition-card {
+  width: 100%;
+  background: linear-gradient(135deg, #fffaf0, #fbf1df);
+  border: 3px solid var(--ds-ink);
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 6px 8px 0 var(--ds-ink);
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.transition-badge {
+  background: var(--ds-cinnabar-soft);
+  border: 2px solid var(--ds-ink);
+  color: #8f3e46;
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 11px;
+  padding: 4px 14px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.transition-mascot-wrapper {
+  margin: 10px 0;
+  animation: transition-float 3s infinite ease-in-out;
+}
+
+@keyframes transition-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.transition-text-big {
+  font-family: "Noto Serif SC", serif;
+  font-size: 24px;
+  color: var(--ds-ink);
+  line-height: 1.4;
+  max-width: 440px;
+}
+
+.transition-text-big span {
+  color: var(--ds-cinnabar);
+  text-decoration: underline;
+  text-decoration-style: wavy;
+}
+
+.transition-desc {
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  color: #4a5d6e;
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+/* ── Active Arena Style Overrides ── */
+.active-player-header-card {
+  width: 100%;
+  background: linear-gradient(90deg, #fff6e5 0%, #fbf1df 100%);
+  border: 2.5px solid var(--ds-ink);
+  border-radius: 16px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 3px 4px 0 rgba(33,57,79,0.1);
+}
+
+.active-player-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.active-player-mascot-thumb {
+  width: 38px;
+  height: 38px;
+  background: white;
+  border: 2px solid var(--ds-ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.active-player-text {
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--ds-ink);
+  text-align: left;
+}
+
+.active-player-text span {
+  font-family: "Noto Serif SC", serif;
+  font-size: 17px;
+  color: var(--ds-cinnabar);
+  display: block;
+}
+
+/* ── Bục Vinh Quang 3D (Leaderboard Podium) ── */
+.podium-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 250px;
+  margin: 32px 0 20px;
+  gap: 12px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.podium-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  max-width: 130px;
+}
+
+.podium-mascot-pos {
+  position: absolute;
+  bottom: 100%; /* floats right on top of column */
+  margin-bottom: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.podium-badge-icon {
+  font-size: 26px;
+  margin-bottom: -10px;
+  z-index: 10;
+  animation: crown-float-podium 2.5s infinite ease-in-out;
+}
+
+.podium-pillar {
+  width: 100%;
+  border: 3px solid var(--ds-ink);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px 6px;
+  box-sizing: border-box;
+  box-shadow: inset 1px 1px 3px rgba(255,255,255,0.2), 3px 0 0 rgba(0,0,0,0.06);
+}
+
+.podium-rank-num {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--ds-ink);
+  line-height: 1.1;
+  margin-bottom: 6px;
+  opacity: 0.85;
+}
+
+.podium-player-name {
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--ds-ink);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.podium-player-time {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 800;
+  font-size: 12px;
+  color: #3b2314;
+  background: rgba(255,255,255,0.4);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Pillar colors */
+.pillar-gold {
+  height: 140px;
+  background: linear-gradient(to top, #d29d44, #f3d494);
+}
+.pillar-silver {
+  height: 100px;
+  background: linear-gradient(to top, #94a8b3, #c5d6db);
+}
+.pillar-bronze {
+  height: 70px;
+  background: linear-gradient(to top, #a3684a, #d1a48c);
+}
+
+/* Animations */
+@keyframes crown-float-podium {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.08); }
+}
+
+/* Leaderboard Full Table styling */
+.tour-table-title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 18px;
+  color: var(--ds-ink);
+  margin-bottom: 12px;
+  text-align: left;
+  border-bottom: 2px dashed rgba(33, 57, 79, 0.15);
+  padding-bottom: 6px;
+}
+
+.tour-leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.tour-leaderboard-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #fffdf9;
+  border: 2px solid var(--ds-ink);
+  border-radius: 14px;
+  box-shadow: 2px 2.5px 0 rgba(33, 57, 79, 0.08);
+}
+
+.tour-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tour-rank-badge {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 800;
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ds-rice);
+  border: 1.5px solid var(--ds-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ds-ink);
+}
+
+.tour-row-avatar {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--ds-ink);
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.tour-row-name {
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 13.5px;
+  color: var(--ds-ink);
+}
+
+.tour-row-time {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 800;
+  font-size: 14px;
+  color: #3b2314;
+  background: #f3edd3;
+  border: 1px solid #5c3a21;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+/* Validation Alert */
+.validation-alert-tour {
+  background: #fdf2f2;
+  border: 2px solid #f05252;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #c81e1e;
+  font-family: var(--font-main);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: left;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Setup grids & buttons ── */
+.hsk-grid, .words-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.setup-btn {
+  background: var(--ds-rice);
+  border: 2px solid var(--ds-ink);
+  border-radius: 12px;
+  padding: 12px 8px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ds-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 2px 3px 0 var(--ds-ink);
+  text-align: center;
+}
+
+.setup-btn:hover {
+  background: #fdf8eb;
+  transform: translateY(-1px);
+  box-shadow: 2px 4px 0 var(--ds-ink);
+}
+
+.setup-btn.active {
+  background: var(--ds-gold);
+  color: var(--ds-ink);
+  border-color: var(--ds-ink);
+  box-shadow: 2px 3px 0 var(--ds-ink);
+  font-weight: 800;
+}
+
+.setup-btn.active:hover {
+  background: #deb262;
+}
+
+.btn-start-practice {
+  width: 100%;
+  background: linear-gradient(145deg, #e06c75, var(--ds-cinnabar));
+  color: white;
+  font-family: var(--font-main);
+  font-weight: 800;
+  font-size: 16px;
+  padding: 14px 20px;
+  border: 3px solid var(--ds-ink);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 3px 4px 0 var(--ds-ink);
+  margin-top: 10px;
+}
+
+.btn-start-practice:hover {
+  background: linear-gradient(145deg, #e67d85, #bd434f);
+  transform: translateY(-1px);
+  box-shadow: 3px 5px 0 var(--ds-ink);
+}
+
+.btn-start-practice:active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0 var(--ds-ink);
+}
+
+/* ── Active Arena (Practice Card & UI) ── */
+.practice-header-row {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.stopwatch-wood-frame {
+  background: #a3724c;
+  border: 3px solid #5c3a21;
+  border-radius: 10px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.2), 2px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.stopwatch-digital-display {
+  background: #f3edd3;
+  border: 1.5px solid #5c3a21;
+  border-radius: 5px;
+  color: #3b2314;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 2px 6px;
+  min-width: 52px;
+  text-align: center;
+}
+
+.jade-beads-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jade-bead {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--ds-ink);
+  background: #e6e6e6;
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.5), 1px 2px 0 rgba(33, 57, 79, 0.15);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.jade-bead.active {
+  background: #50b695;
+  transform: scale(1.15);
+  box-shadow: 0 0 6px rgba(80, 182, 149, 0.6), inset 1px 1px 2px rgba(255, 255, 255, 0.6), 1px 2px 0 rgba(33, 57, 79, 0.2);
+}
+
+.jade-bead.completed {
+  background: var(--ds-gold);
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.6), 1px 2px 0 rgba(33, 57, 79, 0.2);
+}
+
+.btn-quit {
+  background: var(--ds-rice);
+  border: 2px solid var(--ds-ink);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--ds-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 1.5px 2px 0 var(--ds-ink);
+}
+
+.btn-quit:hover {
+  background: var(--ds-cinnabar-soft);
+  color: #8f3e46;
+}
+
+.btn-quit:active {
+  transform: translateY(1px);
+  box-shadow: 0.5px 0.5px 0 var(--ds-ink);
+}
+
+.btn-skip-char {
+  background: var(--ds-rice);
+  border: 2px solid var(--ds-ink);
+  border-radius: var(--ds-radius);
+  padding: 6px 12px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--ds-ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 2px 3px 0 var(--ds-ink);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-skip-char:hover {
+  background: #eedcb9;
+}
+
+.practice-main-card {
+  width: 100%;
+  background: linear-gradient(135deg, #fffaf0, #fbf1df);
+  border: 3px solid var(--ds-ink);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 6px 8px 0 var(--ds-ink);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.practice-char-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 2px dashed rgba(33, 57, 79, 0.15);
+  padding-bottom: 12px;
+}
+
+.practice-char-meta {
+  text-align: left;
+}
+
+.practice-char-han {
+  font-family: "Noto Serif SC", serif;
+  font-size: 42px;
+  color: var(--ds-ink);
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.practice-char-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.practice-char-pinyin {
+  font-family: var(--font-main);
+  font-size: 18px;
+  font-weight: 800;
+  color: rgba(33, 57, 79, 0.85);
+}
+
+.practice-char-meaning {
+  font-family: var(--font-main);
+  font-size: 12.5px;
+  color: #4a5d6e;
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.practice-pronounce-btn {
+  background: var(--ds-rice);
+  border: 2px solid var(--ds-ink);
+  border-radius: 12px;
+  height: 38px;
+  padding: 0 14px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ds-ink);
+  cursor: pointer;
+  box-shadow: 2px 3px 0 var(--ds-ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.practice-pronounce-btn:hover {
+  background: #fdf8eb;
+  transform: translateY(-1px);
+  box-shadow: 2px 4px 0 var(--ds-ink);
+}
+
+.practice-canvas-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 12px;
+}
+
+/* ── Summary Result Card ── */
+.result-card {
+  width: 100%;
+  background: linear-gradient(135deg, #fffaf0, #fbf1df);
+  border: 3px solid var(--ds-ink);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 8px 10px 0 var(--ds-ink);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.result-title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 26px;
+  color: var(--ds-ink);
+  margin-bottom: 4px;
+}
+
+.result-subtitle {
+  font-family: var(--font-main);
+  font-size: 13.5px;
+  color: #4a5d6e;
+}
+
+.result-actions {
+  margin-top: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .tournament-container {
+    padding: 8px;
+    gap: 12px;
+  }
+  .tour-card, .transition-card {
+    padding: 18px 14px;
+    border-radius: 18px;
+  }
+  .tour-title {
+    font-size: 21px;
+  }
+  .transition-text-big {
+    font-size: 19px;
+  }
+  .podium-container {
+    height: 200px;
+    gap: 8px;
+    margin: 24px 0 12px;
+  }
+  .pillar-gold { height: 110px; }
+  .pillar-silver { height: 80px; }
+  .pillar-bronze { height: 55px; }
+  .podium-rank-num {
+    font-size: 24px;
+  }
+  .podium-badge-icon {
+    font-size: 20px;
+  }
+  .podium-player-name {
+    font-size: 11.5px;
+  }
+  .podium-player-time {
+    font-size: 10.5px;
+  }
+  .active-player-header-card {
+    padding: 8px 12px;
+  }
+}

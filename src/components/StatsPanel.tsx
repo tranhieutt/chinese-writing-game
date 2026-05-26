@@ -78,6 +78,14 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
             🎯 Luyện ngẫu nhiên
           </Link>
 
+          <Link 
+            href="/tournament" 
+            className="btn-tournament-nav"
+            title="Đấu trường thi đấu tốc độ"
+          >
+            🏆 Đấu Trường
+          </Link>
+
           <select 
             value={currentHsk} 
             onChange={(e) => onHskChange(e.target.value)}
