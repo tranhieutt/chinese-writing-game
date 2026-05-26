@@ -31,13 +31,15 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({
   return (
     <div className="header">
       <div className="header-main-row">
-        <div className="header-branding">
-          <div className="header-owl" aria-label="Panda mascot" style={{ cursor: 'default' }}>🐼</div>
-          <div className="header-text-group">
-            <div className="header-title">Luyện Viết <span>Chữ Hán</span></div>
-            <div className="header-sub">Học viết đúng thứ tự nét bút · 練字</div>
+        <Link href="/" className="header-branding-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className="header-branding" style={{ cursor: 'pointer' }}>
+            <div className="header-owl" aria-label="Panda mascot">🐼</div>
+            <div className="header-text-group">
+              <div className="header-title">Luyện Viết <span>Chữ Hán</span></div>
+              <div className="header-sub">Học viết đúng thứ tự nét bút · 練字</div>
+            </div>
           </div>
-        </div>
+        </Link>
         
         {/* Gamified Stats Panel */}
         <div className="header-stats">
