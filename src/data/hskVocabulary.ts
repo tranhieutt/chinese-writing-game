@@ -300,18 +300,18 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         label: "Đại từ & Chỉ định",
         icon: "👉",
         chars: [
-          { char: "您", pinyin: "nín", meaning: "👴 Ông, bà, ngài", strokes: 11 },
-          { char: "它", pinyin: "tā", meaning: "🐕 Nó, con vật", strokes: 5 },
+          { char: "您", pinyin: "nín", meaning: "👴 Ông, bà, ngài (lịch sự)", strokes: 11 },
+          { char: "它", pinyin: "tā", meaning: "🐕 Nó, con vật, đồ vật", strokes: 5 },
           { char: "每", pinyin: "měi", meaning: "🗓️ Mỗi, mọi", strokes: 7 },
           { char: "俩", pinyin: "liǎ", meaning: "👥 Cặp, hai người", strokes: 9 },
           { char: "旁", pinyin: "páng", meaning: "📍 Bên cạnh", strokes: 10 },
-          { char: "边", pinyin: "biān", meaning: "🧭 Phía, biên", strokes: 5 },
+          { char: "边", pinyin: "biān", meaning: "🧭 Phía, biên, bên", strokes: 5 },
           { char: "别", pinyin: "bié", meaning: "❌ Đừng, cái khác", strokes: 7 }
         ]
       },
       {
         id: "hsk2-family",
-        label: "Gia đình & Sức khỏe",
+        label: "Gia đình & Con người",
         icon: "❤️",
         chars: [
           { char: "哥", pinyin: "gē", meaning: "👦 Anh trai", strokes: 10 },
@@ -323,7 +323,11 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "夫", pinyin: "fū", meaning: "👨 Chồng, phu", strokes: 4 },
           { char: "身", pinyin: "shēn", meaning: "👤 Thân thể, mình", strokes: 7 },
           { char: "病", pinyin: "bìng", meaning: "🤒 Bệnh, ốm", strokes: 10 },
-          { char: "药", pinyin: "yào", meaning: "💊 Thuốc", strokes: 9 }
+          { char: "药", pinyin: "yào", meaning: "💊 Thuốc", strokes: 9 },
+          { char: "孩", pinyin: "hái", meaning: "👶 Trẻ em, con", strokes: 9 },
+          { char: "男", pinyin: "nán", meaning: "👨 Nam, đàn ông", strokes: 7 },
+          { char: "丈", pinyin: "zhàng", meaning: "👨 Trượng (trong trượng phu)", strokes: 3 },
+          { char: "牛", pinyin: "niú", meaning: "🐂 Con trâu, con bò", strokes: 4 }
         ]
       },
       {
@@ -339,8 +343,18 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "泳", pinyin: "yǒng", meaning: "🏊 Bơi", strokes: 8 },
           { char: "唱", pinyin: "chàng", meaning: "🎤 Hát", strokes: 11 },
           { char: "歌", pinyin: "gē", meaning: "🎵 Bài hát", strokes: 14 },
-          { char: "跳", pinyin: "tiào", meaning: "💃 Nhảy", strokes: 13 },
-          { char: "舞", pinyin: "wǔ", meaning: "💃 Khiêu vũ", strokes: 14 }
+          { char: "跳", pinyin: "tiào", meaning: "💃 Nhảy, khiêu vũ", strokes: 13 },
+          { char: "舞", pinyin: "wǔ", meaning: "💃 Khiêu vũ, múa", strokes: 14 },
+          { char: "穿", pinyin: "chuān", meaning: "👕 Mặc, xỏ (quần áo)", strokes: 9 },
+          { char: "走", pinyin: "zǒu", meaning: "🚶 Đi, đi bộ", strokes: 7 },
+          { char: "进", pinyin: "jìn", meaning: "📥 Vào, tiến vào", strokes: 7 },
+          { char: "到", pinyin: "dào", meaning: "📍 Đến, đạt tới", strokes: 8 },
+          { char: "给", pinyin: "gěi", meaning: "🎁 Cho, đưa cho", strokes: 9 },
+          { char: "卖", pinyin: "mài", meaning: "🛒 Bán", strokes: 8 },
+          { char: "洗", pinyin: "xǐ", meaning: "🧼 Rửa, giặt, tắm", strokes: 9 },
+          { char: "休", pinyin: "xiū", meaning: "🛌 Nghỉ ngơi", strokes: 6 },
+          { char: "息", pinyin: "xī", meaning: "💨 Thở, ngừng, nghỉ", strokes: 10 },
+          { char: "要", pinyin: "yào", meaning: "⭐ Muốn, cần, phải", strokes: 9 }
         ]
       },
       {
@@ -348,13 +362,16 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         label: "Du lịch & Giao thông",
         icon: "✈️",
         chars: [
-          { char: "旅", pinyin: "lǚ", meaning: "✈️ Du lịch", strokes: 10 },
-          { char: "票", pinyin: "piào", meaning: "🎫 Vé", strokes: 11 },
+          { char: "旅", pinyin: "lǚ", meaning: "✈️ Du lịch, lữ hành", strokes: 10 },
+          { char: "票", pinyin: "piào", meaning: "🎫 Vé, phiếu", strokes: 11 },
           { char: "汽", pinyin: "qì", meaning: "🚗 Hơi nước, ô tô", strokes: 7 },
-          { char: "船", pinyin: "chuán", meaning: "🚢 Thuyền, tàu", strokes: 11 },
-          { char: "公", pinyin: "gōng", meaning: "👥 Công cộng", strokes: 4 },
-          { char: "路", pinyin: "lù", meaning: "🛣️ Đường đi", strokes: 13 },
-          { char: "场", pinyin: "chǎng", meaning: "🏟️ Sân bãi", strokes: 6 }
+          { char: "船", pinyin: "chuán", meaning: "🚢 Thuyền, tàu thủy", strokes: 11 },
+          { char: "公", pinyin: "gōng", meaning: "👥 Công cộng, chung", strokes: 4 },
+          { char: "路", pinyin: "lù", meaning: "🛣️ Đường đi, lộ trình", strokes: 13 },
+          { char: "场", pinyin: "chǎng", meaning: "🏟️ Sân bãi, quảng trường", strokes: 6 },
+          { char: "自", pinyin: "zì", meaning: "👤 Tự, tự mình", strokes: 6 },
+          { char: "共", pinyin: "gòng", meaning: "🔁 Chung, tổng cộng", strokes: 6 },
+          { char: "司", pinyin: "sī", meaning: "🏢 Quản lý, ty (công ty)", strokes: 5 }
         ]
       },
       {
@@ -364,16 +381,23 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         chars: [
           { char: "报", pinyin: "bào", meaning: "📰 Báo chí, báo cáo", strokes: 7 },
           { char: "纸", pinyin: "zhǐ", meaning: "📄 Giấy", strokes: 7 },
-          { char: "试", pinyin: "shì", meaning: "📝 Thử, thi", strokes: 8 },
+          { char: "试", pinyin: "shì", meaning: "📝 Thử, thi cử", strokes: 8 },
           { char: "考", pinyin: "kǎo", meaning: "📝 Thi, khảo sát", strokes: 6 },
           { char: "题", pinyin: "tí", meaning: "📋 Đề bài, câu hỏi", strokes: 15 },
           { char: "懂", pinyin: "dǒng", meaning: "💡 Hiểu, rõ", strokes: 15 },
-          { char: "错", pinyin: "cuò", meaning: "❌ Sai, hỏng", strokes: 8 },
+          { char: "错", pinyin: "cuò", meaning: "❌ Sai, hỏng", strokes: 13 },
           { char: "完", pinyin: "wán", meaning: "🏁 Hoàn thành, hết", strokes: 7 },
           { char: "准", pinyin: "zhǔn", meaning: "🎯 Chuẩn, cho phép", strokes: 10 },
           { char: "备", pinyin: "bèi", meaning: "📦 Chuẩn bị, sẵn sàng", strokes: 8 },
           { char: "介", pinyin: "jiè", meaning: "🤝 Giới thiệu, ở giữa", strokes: 4 },
-          { char: "绍", pinyin: "shào", meaning: "🤝 Thiệu, nối tiếp", strokes: 8 }
+          { char: "绍", pinyin: "shào", meaning: "🤝 Thiệu, nối tiếp", strokes: 8 },
+          { char: "课", pinyin: "kè", meaning: "📖 Bài học, môn học", strokes: 10 },
+          { char: "教", pinyin: "jiào", meaning: "👩‍🏫 Dạy, giáo dục", strokes: 11 },
+          { char: "始", pinyin: "shǐ", meaning: "🔓 Bắt đầu, khởi đầu", strokes: 8 },
+          { char: "乐", pinyin: "lè", meaning: "😊 Vui vẻ, âm nhạc", strokes: 5 },
+          { char: "班", pinyin: "bān", meaning: "👥 Ca, lớp học", strokes: 10 },
+          { char: "知", pinyin: "zhī", meaning: "🧠 Biết, tri thức", strokes: 8 },
+          { char: "道", pinyin: "dào", meaning: "🛣️ Đường đi, đạo lý", strokes: 12 }
         ]
       },
       {
@@ -384,14 +408,18 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "帮", pinyin: "bāng", meaning: "🤝 Giúp đỡ", strokes: 9 },
           { char: "助", pinyin: "zhù", meaning: "🤝 Trợ giúp", strokes: 7 },
           { char: "希", pinyin: "xī", meaning: "🌟 Hy vọng, hiếm", strokes: 7 },
-          { char: "望", pinyin: "wàng", meaning: "🌟 Mong mỏi, ngóng", strokes: 11 },
-          { char: "等", pinyin: "děng", meaning: "⏳ Chờ, đợi, bằng", strokes: 12 },
+          { char: "望", pinyin: "wàng", meaning: "🌟 Mong mỏi, ngóng trông", strokes: 11 },
+          { char: "等", pinyin: "děng", meaning: "⏳ Chờ, đợi, bằng nhau", strokes: 12 },
           { char: "让", pinyin: "ràng", meaning: "➡️ Nhường, để, cho phép", strokes: 5 },
           { char: "使", pinyin: "shǐ", meaning: "➡️ Sử dụng, khiến cho", strokes: 8 },
           { char: "送", pinyin: "sòng", meaning: "🎁 Tặng, đưa tiễn", strokes: 9 },
           { char: "找", pinyin: "zhǎo", meaning: "🔍 Tìm kiếm", strokes: 7 },
           { char: "办", pinyin: "bàn", meaning: "🛠️ Làm, giải quyết", strokes: 4 },
-          { char: "宾", pinyin: "bīn", meaning: "🙋 Khách, tân khách", strokes: 10 }
+          { char: "宾", pinyin: "bīn", meaning: "🙋 Khách, tân khách", strokes: 10 },
+          { char: "告", pinyin: "gào", meaning: "📣 Báo cáo, bảo cho biết", strokes: 7 },
+          { char: "诉", pinyin: "sù", meaning: "💬 Kể, tố cáo, nói", strokes: 7 },
+          { char: "答", pinyin: "dá", meaning: "📝 Trả lời, đáp", strokes: 12 },
+          { char: "迎", pinyin: "yíng", meaning: "👋 Đón tiếp, hoan nghênh", strokes: 7 }
         ]
       },
       {
@@ -399,27 +427,73 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         label: "Thời tiết & Thiên nhiên",
         icon: "☁️",
         chars: [
-          { char: "阴", pinyin: "yīn", meaning: "☁️ Âm, u ám", strokes: 6 },
+          { char: "阴", pinyin: "yīn", meaning: "☁️ Âm, u ám, râm", strokes: 6 },
           { char: "晴", pinyin: "qíng", meaning: "☀️ Nắng, trời trong", strokes: 12 },
-          { char: "两", pinyin: "liǎng", meaning: "🔢 Hai (lượng từ)", strokes: 7 },
-          { char: "第", pinyin: "dì", meaning: "🥇 Thứ (số thứ tự)", strokes: 11 }
+          { char: "两", pinyin: "liǎng", meaning: "🔢 Hai (dùng cho lượng từ)", strokes: 7 },
+          { char: "第", pinyin: "dì", meaning: "🥇 Thứ (số thứ tự)", strokes: 11 },
+          { char: "雪", pinyin: "xuě", meaning: "❄️ Tuyết", strokes: 11 }
         ]
       },
       {
         id: "hsk2-states",
-        label: "Đo lường & Từ khác",
+        label: "Đo lường & Từ chỉ mức độ",
         icon: "📏",
         chars: [
           { char: "慢", pinyin: "màn", meaning: "🐢 Chậm", strokes: 14 },
           { char: "快", pinyin: "kuài", meaning: "⚡ Nhanh", strokes: 7 },
-          { char: "贵", pinyin: "guì", meaning: "💰 Đắt, quý", strokes: 9 },
+          { char: "贵", pinyin: "guì", meaning: "💰 Đắt, quý giá", strokes: 9 },
           { char: "便", pinyin: "biàn", meaning: "🏷️ Tiện lợi, rẻ", strokes: 9 },
           { char: "宜", pinyin: "yí", meaning: "🏷️ Thích hợp, rẻ", strokes: 8 },
           { char: "近", pinyin: "jìn", meaning: "📍 Gần", strokes: 7 },
           { char: "远", pinyin: "yuǎn", meaning: "🗺️ Xa", strokes: 7 },
           { char: "离", pinyin: "lí", meaning: "🧭 Cách, rời lìa", strokes: 10 },
-          { char: "往", pinyin: "wǎng", meaning: "➡️ Hướng về, đi", strokes: 8 },
-          { char: "向", pinyin: "xiàng", meaning: "➡️ Hướng về, phía", strokes: 6 }
+          { char: "往", pinyin: "wǎng", meaning: "➡️ Hướng về, đi qua", strokes: 8 },
+          { char: "向", pinyin: "xiàng", meaning: "➡️ Hướng về, phía", strokes: 6 },
+          { char: "比", pinyin: "bǐ", meaning: "⚖️ So với, so sánh", strokes: 4 },
+          { char: "累", pinyin: "lèi", meaning: "😫 Mệt mỏi", strokes: 11 },
+          { char: "忙", pinyin: "máng", meaning: "💼 Bận rộn", strokes: 6 },
+          { char: "新", pinyin: "xīn", meaning: "🆕 Mới, tân", strokes: 13 },
+          { char: "真", pinyin: "zhēn", meaning: "💯 Thật, chân thật", strokes: 10 },
+          { char: "最", pinyin: "zuì", meaning: "🥇 Nhất", strokes: 12 }
+        ]
+      },
+      {
+        id: "hsk2-conjunctions",
+        label: "Liên từ & Trợ từ liên kết",
+        icon: "🔗",
+        chars: [
+          { char: "虽", pinyin: "suī", meaning: "🔗 Tuy, mặc dù", strokes: 9 },
+          { char: "然", pinyin: "rán", meaning: "🍂 Tự nhiên, thế", strokes: 12 },
+          { char: "但", pinyin: "dàn", meaning: "🔗 Nhưng", strokes: 7 },
+          { char: "因", pinyin: "yīn", meaning: "🔗 Vì, nguyên nhân", strokes: 6 },
+          { char: "所", pinyin: "suǒ", meaning: "📍 Nơi chốn, nên", strokes: 8 },
+          { char: "以", pinyin: "yǐ", meaning: "🔗 Bằng, để, lấy", strokes: 4 },
+          { char: "也", pinyin: "yě", meaning: "🔁 Cũng", strokes: 3 },
+          { char: "已", pinyin: "yǐ", meaning: "⏳ Đã, rồi", strokes: 3 },
+          { char: "思", pinyin: "sī", meaning: "💭 Suy nghĩ, ý nghĩ", strokes: 9 }
+        ]
+      },
+      {
+        id: "hsk2-objects-food",
+        label: "Đồ vật & Ăn uống",
+        icon: "🥚",
+        chars: [
+          { char: "鸡", pinyin: "jī", meaning: "🐔 Con gà", strokes: 7 },
+          { char: "蛋", pinyin: "dàn", meaning: "🥚 Trứng", strokes: 11 },
+          { char: "咖", pinyin: "kā", meaning: "☕ Cà (trong cà phê)", strokes: 8 },
+          { char: "啡", pinyin: "fēi", meaning: "☕ Phê (trong cà phê)", strokes: 11 },
+          { char: "瓜", pinyin: "guā", meaning: "🍉 Quả dưa", strokes: 5 },
+          { char: "羊", pinyin: "yáng", meaning: "🐑 Con dê, cừu", strokes: 6 },
+          { char: "肉", "pinyin": "ròu", "meaning": "🥩 Thịt", "strokes": 6 },
+          { char: "件", "pinyin": "jiàn", "meaning": "👕 Chiếc, cái (lượng từ quần áo)", "strokes": 6 },
+          { char: "表", "pinyin": "biǎo", "meaning": "⌚ Đồng hồ, biểu hiện", "strokes": 8 },
+          { char: "号", "pinyin": "hào", "meaning": "🔢 Số, ngày", "strokes": 5 },
+          { char: "张", "pinyin": "zhāng", "meaning": "📄 Tờ, tấm (lượng từ)", "strokes": 7 },
+          { char: "外", "pinyin": "wài", "meaning": "🚪 Bên ngoài, ngoại", "strokes": 5 },
+          { char: "问", "pinyin": "wèn", "meaning": "❓ Hỏi", "strokes": 6 },
+          { char: "右", "pinyin": "yòu", "meaning": "👉 Bên phải, hữu", "strokes": 5 },
+          { char: "左", "pinyin": "zuǒ", "meaning": "👈 Bên trái, tả", "strokes": 5 },
+          { char: "间", "pinyin": "jiān", "meaning": "🏠 Căn phòng, khoảng giữa", "strokes": 7 }
         ]
       },
       {
@@ -446,7 +520,7 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         icon: "😭",
         chars: [
           { char: "极", pinyin: "jí", meaning: "📈 Cực kỳ, hết mức", strokes: 7 },
-          { char: "差", pinyin: "chà", meaning: "📉 Kém, tồi", strokes: 9 },
+          { char: "差", pinyin: "chà", meaning: "📉 Kém, tồi, lệch", strokes: 9 },
           { char: "饱", pinyin: "bǎo", meaning: "🍲 No bụng", strokes: 8 },
           { char: "渴", pinyin: "kě", meaning: "🥤 Khát nước", strokes: 12 },
           { char: "饿", pinyin: "è", meaning: "🍽️ Đói bụng", strokes: 10 },
@@ -457,7 +531,10 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "笑", pinyin: "xiào", meaning: "😄 Cười", strokes: 10 },
           { char: "怒", pinyin: "nù", meaning: "😡 Giận dữ", strokes: 9 },
           { char: "怕", pinyin: "pà", meaning: "😨 Sợ hãi", strokes: 8 },
-          { char: "疼", pinyin: "téng", meaning: "🤕 Đau đớn", strokes: 10 }
+          { char: "疼", pinyin: "téng", meaning: "🤕 Đau đớn", strokes: 10 },
+          { char: "难", pinyin: "nán", meaning: "😢 Buồn, khó khăn", strokes: 10 },
+          { char: "满", pinyin: "mǎn", meaning: "🈵 Đầy, hài lòng", strokes: 13 },
+          { char: "急", pinyin: "jí", meaning: "🏃 Vội vã, lo lắng", strokes: 9 }
         ]
       },
       {
@@ -469,10 +546,13 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "层", pinyin: "céng", meaning: "🏢 Tầng, lớp", strokes: 7 },
           { char: "梯", pinyin: "tī", meaning: "🪜 Thang", strokes: 11 },
           { char: "宿", pinyin: "sù", meaning: "🛏️ Trọ, ngủ đêm", strokes: 11 },
-          { char: "舍", pinyin: "shè", meaning: "🏠 Nhà ở, ký túc", strokes: 8 },
+          { char: "舍", pinyin: "shè", meaning: "🏠 Nhà ở, ký túc xá", strokes: 8 },
           { char: "室", pinyin: "shì", meaning: "🏫 Phòng", strokes: 9 },
           { char: "银", pinyin: "yín", meaning: "🪙 Bạc, ngân hàng", strokes: 11 },
-          { char: "行", pinyin: "xíng", meaning: "🏦 Hàng, đi", strokes: 6 }
+          { char: "行", pinyin: "xíng", meaning: "🏦 Hàng, đi, lối hành", strokes: 6 },
+          { char: "附", pinyin: "fù", meaning: "📍 Phụ vào, lân cận", strokes: 7 },
+          { char: "街", pinyin: "jiē", meaning: "🛣️ Phố, đường phố", strokes: 12 },
+          { char: "城", pinyin: "chéng", meaning: "🏙️ Thành trì, thành phố", strokes: 9 }
         ]
       },
       {
@@ -481,12 +561,14 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         icon: "🚇",
         chars: [
           { char: "铁", pinyin: "tiě", meaning: "🚇 Sắt, đường sắt", strokes: 10 },
-          { char: "航", pinyin: "háng", meaning: "✈️ Hàng hải, bay", strokes: 10 },
-          { char: "班", pinyin: "bān", meaning: "👥 Lớp, chuyến bay", strokes: 10 },
-          { char: "护", pinyin: "hù", meaning: "🛡️ Bảo vệ, hộ chiếu", strokes: 7 },
-          { char: "照", pinyin: "zhào", meaning: "📸 Chiếu sáng, ảnh", strokes: 13 },
-          { char: "李", pinyin: "lǐ", meaning: "🍑 Lý, hành lý", strokes: 7 },
-          { char: "箱", pinyin: "xiāng", meaning: "📦 Hòm, vali", strokes: 15 }
+          { char: "航", pinyin: "háng", meaning: "✈️ Hàng hải, bay, hàng không", strokes: 10 },
+          { char: "班", pinyin: "bān", meaning: "👥 Lớp, chuyến bay (lượng từ)", strokes: 10 },
+          { char: "护", pinyin: "hù", meaning: "🛡️ Bảo vệ, hộ tống", strokes: 7 },
+          { char: "照", pinyin: "zhào", meaning: "📸 Chiếu sáng, bức ảnh", strokes: 13 },
+          { char: "李", pinyin: "lǐ", meaning: "🍑 Lý (họ), hành lý", strokes: 7 },
+          { char: "箱", pinyin: "xiāng", meaning: "📦 Hòm, vali, thùng", strokes: 15 },
+          { char: "辆", pinyin: "liàng", meaning: "🚗 Chiếc, cái (lượng từ xe cộ)", strokes: 11 },
+          { char: "接", pinyin: "jiē", meaning: "👋 Đón, nhận, tiếp xúc", strokes: 11 }
         ]
       },
       {
@@ -501,7 +583,10 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "刷", pinyin: "shuā", meaning: "🪥 Chải, bàn chải", strokes: 8 },
           { char: "牙", pinyin: "yá", meaning: "🦷 Răng", strokes: 4 },
           { char: "膏", pinyin: "gāo", meaning: "🧴 Kem, thuốc mỡ", strokes: 14 },
-          { char: "镜", pinyin: "jìng", meaning: "🪞 Gương, kính", strokes: 16 }
+          { char: "镜", pinyin: "jìng", meaning: "🪞 Gương, kính đeo", strokes: 16 },
+          { char: "包", pinyin: "bāo", meaning: "👜 Túi xách, bao gói", strokes: 5 },
+          { char: "帽", pinyin: "mào", meaning: "🧢 Cái mũ", strokes: 12 },
+          { char: "双", pinyin: "shuāng", meaning: "👥 Đôi, song", strokes: 4 }
         ]
       },
       {
@@ -522,8 +607,11 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "冬", pinyin: "dōng", meaning: "❄️ Mùa đông", strokes: 5 },
           { char: "季", pinyin: "jì", meaning: "📅 Mùa, quý", strokes: 8 },
           { char: "河", pinyin: "hé", meaning: "🌊 Sông", strokes: 8 },
-          { char: "江", pinyin: "jiāng", meaning: "🌊 Sông lớn (Trường Giang)", strokes: 6 },
-          { char: "海", pinyin: "hǎi", meaning: "🌊 Biển, đại dương", strokes: 10 }
+          { char: "江", pinyin: "jiāng", meaning: "🌊 Sông lớn", strokes: 6 },
+          { char: "海", pinyin: "hǎi", meaning: "🌊 Biển, đại dương", strokes: 10 },
+          { char: "冰", pinyin: "bīng", meaning: "❄️ Băng, đá lạnh", strokes: 6 },
+          { char: "香", pinyin: "xiāng", meaning: "👃 Thơm, hương", strokes: 9 },
+          { char: "蕉", pinyin: "jiāo", meaning: "🍌 Chuối", strokes: 15 }
         ]
       },
       {
@@ -535,11 +623,11 @@ export const hskVocabulary: Record<string, HskLevelData> = {
           { char: "史", pinyin: "shǐ", meaning: "📖 Lịch sử", strokes: 5 },
           { char: "体", pinyin: "tǐ", meaning: "👤 Thể chất, thân thể", strokes: 7 },
           { char: "育", pinyin: "yù", meaning: "🏫 Giáo dục, nuôi dưỡng", strokes: 8 },
-          { char: "健", pinyin: "jiàn", meaning: "💪 Khỏe mạnh", strokes: 11 },
-          { char: "康", pinyin: "kāng", meaning: "💪 An khang, khỏe", strokes: 11 },
+          { char: "健", pinyin: "jiàn", meaning: "💪 Khỏe mạnh, kiện khang", strokes: 10 },
+          { char: "康", pinyin: "kāng", meaning: "💪 An khang, khỏe mạnh", strokes: 11 },
           { char: "运", pinyin: "yùn", meaning: "🏃 Vận chuyển, vận động", strokes: 7 },
           { char: "动", pinyin: "dòng", meaning: "🏃 Động, di chuyển", strokes: 6 },
-          { char: "锻", pinyin: "duàn", meaning: "🔨 Rèn luyện", strokes: 17 },
+          { char: "锻", pinyin: "duàn", meaning: "🔨 Rèn luyện (rèn đúc)", strokes: 14 },
           { char: "炼", pinyin: "liàn", meaning: "🔥 Luyện, tôi luyện", strokes: 9 }
         ]
       },
@@ -548,16 +636,18 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         label: "Xã hội & Công việc",
         icon: "💼",
         chars: [
-          { char: "经", pinyin: "jīng", meaning: "💼 Kinh qua, quản lý", strokes: 8 },
-          { char: "理", pinyin: "lǐ", meaning: "💼 Lý thuyết, quản lý", strokes: 11 },
+          { char: "经", pinyin: "jīng", meaning: "💼 Kinh qua, quản lý, trải qua", strokes: 8 },
+          { char: "理", pinyin: "lǐ", meaning: "💼 Lý thuyết, quản lý, xử lý", strokes: 11 },
           { char: "法", pinyin: "fǎ", meaning: "⚖️ Pháp luật, phương pháp", strokes: 8 },
-          { char: "决", pinyin: "jué", meaning: "🎯 Quyết định", strokes: 6 },
+          { char: "决", pinyin: "jué", meaning: "🎯 Quyết định, giải quyết", strokes: 6 },
           { char: "定", pinyin: "dìng", meaning: "🎯 Định ra, chắc chắn", strokes: 8 },
           { char: "选", pinyin: "xuǎn", meaning: "🗳️ Chọn lựa", strokes: 9 },
-          { char: "择", pinyin: "zé", meaning: "🗳️ Lựa chọn", strokes: 8 },
-          { char: "愿", pinyin: "yuàn", meaning: "🌟 Nguyện vọng, muốn", strokes: 14 },
-          { char: "意", pinyin: "yì", meaning: "💭 Ý kiến, ý muốn", strokes: 13 },
-          { char: "敢", pinyin: "gǎn", meaning: "💪 Dũng cảm, dám", strokes: 11 }
+          { char: "择", pinyin: "zé", meaning: "🗳️ Lựa chọn, tuyển trạch", strokes: 8 },
+          { char: "愿", pinyin: "yuàn", meaning: "🌟 Nguyện vọng, ước muốn", strokes: 14 },
+          { char: "意", pinyin: "yì", meaning: "💭 Ý kiến, ý chí, ý nghĩa", strokes: 13 },
+          { char: "敢", pinyin: "gǎn", meaning: "💪 Dũng cảm, dám làm", strokes: 11 },
+          { char: "议", pinyin: "yì", meaning: "💬 Thảo luận, hội nghị", strokes: 5 },
+          { char: "解", pinyin: "jiě", meaning: "🔑 Mở ra, giải thích, giải quyết", strokes: 13 }
         ]
       },
       {
@@ -565,11 +655,90 @@ export const hskVocabulary: Record<string, HskLevelData> = {
         label: "Thời gian & Tần suất",
         icon: "⚡",
         chars: [
-          { char: "突", pinyin: "tū", meaning: "⚡ Đột nhiên", strokes: 9 },
+          { char: "突", pinyin: "tū", meaning: "⚡ Đột nhiên, chọc thủng", strokes: 9 },
           { char: "然", pinyin: "rán", meaning: "🍂 Tự nhiên, như vậy", strokes: 12 },
-          { char: "终", pinyin: "zhōng", meaning: "🏁 Cuối cùng, kết thúc", strokes: 8 },
+          { char: "终", pinyin: "zhōng", meaning: "🏁 Cuối cùng, kết thúc, chung", strokes: 8 },
           { char: "于", pinyin: "yú", meaning: "📍 Ở, vào lúc", strokes: 3 },
-          { char: "常", pinyin: "cháng", meaning: "🔁 Thường xuyên", strokes: 11 }
+          { char: "常", pinyin: "cháng", meaning: "🔁 Thường xuyên", strokes: 11 },
+          { char: "直", pinyin: "zhí", meaning: "📏 Thẳng, liên tục, trực tiếp", strokes: 8 },
+          { char: "般", pinyin: "bān", meaning: "👥 Kiểu, loại, bình thường", strokes: 10 }
+        ]
+      },
+      {
+        id: "hsk3-people",
+        label: "Xưng hô & Con người",
+        icon: "👩",
+        chars: [
+          { char: "姨", pinyin: "yí", meaning: "👩 Cô, dì", strokes: 9 },
+          { char: "叔", pinyin: "shū", meaning: "👨 Chú, bác", strokes: 8 },
+          { char: "邻", pinyin: "lín", meaning: "🏘️ Hàng xóm, lân cận", strokes: 7 },
+          { char: "居", pinyin: "jū", meaning: "🏠 Ở, cư trú", strokes: 8 },
+          { char: "留", pinyin: "liú", meaning: "🎓 Giữ lại, lưu học", strokes: 10 },
+          { char: "己", pinyin: "jǐ", meaning: "👤 Tự mình, kỷ", strokes: 3 },
+          { char: "万", pinyin: "wàn", meaning: "🔟 Mười nghìn, vạn", strokes: 3 }
+        ]
+      },
+      {
+        id: "hsk3-actions-expand",
+        label: "Động từ mở rộng",
+        icon: "⚙️",
+        chars: [
+          { char: "搬", pinyin: "bān", meaning: "📦 Bê, dọn nhà, di chuyển", strokes: 13 },
+          { char: "带", pinyin: "dài", meaning: "👜 Mang theo, đem theo, đai", strokes: 9 },
+          { char: "放", pinyin: "fàng", meaning: "📥 Đặt, để, thả ra", strokes: 8 },
+          { char: "画", pinyin: "huà", meaning: "🎨 Vẽ, tranh vẽ", strokes: 8 },
+          { char: "换", pinyin: "huàn", meaning: "🔄 Thay đổi, trao đổi", strokes: 10 },
+          { char: "借", pinyin: "jiè", meaning: "📖 Vay, mượn", strokes: 10 },
+          { char: "骑", pinyin: "qí", meaning: "🚴 Cưỡi (ngựa, xe đạp)", strokes: 11 },
+          { char: "扫", pinyin: "sǎo", meaning: "🧹 Quét dọn", strokes: 6 },
+          { char: "算", pinyin: "suàn", meaning: "🧮 Tính toán, coi là", strokes: 14 },
+          { char: "忘", pinyin: "wàng", meaning: "🧠 Quên", strokes: 7 },
+          { char: "澡", pinyin: "zǎo", meaning: "🧼 Tắm rửa", strokes: 16 }
+        ]
+      },
+      {
+        id: "hsk3-states-expand",
+        label: "Tính chất & Tính từ rộng",
+        icon: "✨",
+        chars: [
+          { char: "矮", pinyin: "ǎi", meaning: "📉 Thấp (chiều cao)", strokes: 13 },
+          { char: "静", pinyin: "jìng", meaning: "🤫 Yên tĩnh, lặng", strokes: 14 },
+          { char: "被", pinyin: "bèi", meaning: "🛌 Bị, được (bị động), chăn", strokes: 10 },
+          { char: "较", pinyin: "jiào", meaning: "⚖️ Khá là, tương đối, so sánh", strokes: 10 },
+          { char: "赛", pinyin: "sài", meaning: "🏆 Thi đấu, trận đấu", strokes: 14 },
+          { char: "必", pinyin: "bì", meaning: "📌 Nhất định, phải", strokes: 5 },
+          { char: "须", pinyin: "xū", meaning: "🧔 Cần phải, râu", strokes: 9 },
+          { char: "变", pinyin: "biàn", meaning: "🔄 Thay đổi, biến hóa", strokes: 8 },
+          { char: "化", pinyin: "huà", meaning: "🧪 Biến hóa, thay đổi", strokes: 4 },
+          { char: "聪", pinyin: "cōng", meaning: "🧠 Thông minh, tai thính", strokes: 15 },
+          { char: "坏", pinyin: "huài", meaning: "❌ Hỏng, xấu, tồi", strokes: 7 },
+          { char: "环", pinyin: "huán", meaning: "⭕ Vòng, môi trường", strokes: 8 },
+          { char: "境", "pinyin": "jìng", "meaning": "🗺️ Cõi, biên giới, hoàn cảnh", "strokes": 14 },
+          { char: "久", "pinyin": "jiǔ", "meaning": "⏳ Lâu, dài hạn", "strokes": 3 },
+          { char: "旧", "pinyin": "jiù", "meaning": "🏚️ Cũ, lỗi thời", "strokes": 5 },
+          { char: "特", "pinyin": "tè", "meaning": "⭐ Đặc biệt", "strokes": 10 },
+          { char: "越", "pinyin": "yuè", "meaning": "📈 Vượt qua, càng", "strokes": 12 },
+          { char: "重", "pinyin": "zhòng", "meaning": "🏋️ Nặng, quan trọng", "strokes": 9 },
+          { char: "主", "pinyin": "zhǔ", "meaning": "👑 Chủ nhân, chính, chủ yếu", "strokes": 5 }
+        ]
+      },
+      {
+        id: "hsk3-objects-communication",
+        label: "Vật dụng & Liên lạc",
+        icon: "✉️",
+        chars: [
+          { char: "鼻", pinyin: "bí", meaning: "👃 Cái mũi", strokes: 14 },
+          { char: "笔", pinyin: "bǐ", meaning: "✏️ Bút", strokes: 10 },
+          { char: "单", pinyin: "dān", meaning: "📄 Đơn, phiếu, lẻ", strokes: 8 },
+          { char: "衬", pinyin: "chèn", meaning: "👕 Áo lót, áo sơ mi", strokes: 8 },
+          { char: "衫", pinyin: "shān", meaning: "👕 Áo sơ mi", strokes: 8 },
+          { char: "结", pinyin: "jié", meaning: "🎀 Kết lại, thắt nút", strokes: 9 },
+          { char: "婚", pinyin: "hūn", meaning: "👰 Kết hôn", strokes: 11 },
+          { char: "脚", pinyin: "jiǎo", meaning: "🦶 Bàn chân", strokes: 11 },
+          { char: "条", pinyin: "tiáo", meaning: "🎗️ Con, cái (lượng từ dài)", strokes: 7 },
+          { char: "邮", pinyin: "yóu", meaning: "✉️ Bưu điện, gửi thư", strokes: 7 },
+          { char: "卡", pinyin: "kǎ", meaning: "💳 Thẻ, thiệp", strokes: 5 },
+          { char: "信", pinyin: "xìn", meaning: "✉️ Tin tưởng, bức thư", strokes: 9 }
         ]
       }
     ]
